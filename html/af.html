@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Timer</title>
+  </head>
+  <body>
+    <div id="timer">0:00.000</div>
+    <button id="btn">START</button>
+    <script>
+      let msec = 0;
+      const $btn = document.getElementById("btn");
+      const $timer = document.getElementById("timer");
+
+      let timer;
+
+      // btn의 label 값을 바꿔야 함 -> function이라는 콜백 함수에서 접근해야 한다.
+      $btn.addEventListener("click", function () {
+        console.log(this.innerText);
+        if (this.innerText === "START") {
+          this.innerText = "STOP";
+          timer = setInterval(() => {
+            $timer.innerHTML = formatTime(++msec);
+          }, 1);
+        } else {
+          this.innerText = "START";
+          clearInterval(timer);
+        }
+      }); // id는 unique하기 때문에 항상 1개만 가져온다.
+
+      function formatTime(ms) {
+        const m = Math.trunc(millis / 60000)
+          .toString()
+          .padStart(2, "0");
+        const s = Math.trunc(millis / 1000)
+          .toString()
+          .padStart(2, "0");
+        const ms = Math.trunc(millis % 1000)
+          .toString()
+          .padStart(3, "0");
+        return `${m}:${s}:${ms}`;
+      }
+    </script>
+  </body>
+</html>
