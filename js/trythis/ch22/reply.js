@@ -15,7 +15,10 @@ getPosts(1);
 
  */
 
+/**
 async function getPosts(userId) {
+// 비동기적으로 모든 데이터를 불러오고 json으로 할 때까지 await으로
+// 걸어놔서 기다리게 한다!
   const postResponse = await fetch(
     `https://jsonplaceholder.typicode.com/posts?userId=${userId}`
   );
@@ -35,9 +38,43 @@ async function getPosts(userId) {
       comments: comments,
     };
   });
+
+  // commentPromises -> async이기 떄문에 Promise를 반환한다.
+  // 따라서 all을 해서 안에 데이터를 실제로 반환해준다!
   const result = await Promise.all(commentsPromises);
 
   return result;
 }
 
 getPosts(1).then(console.log);
+*/
+
+const API = "https://jsonplaceholder.typicode.com";
+const getPostsByUserId = async (userId) =>
+  fetch(`${API}/posts?userId=${userId}`).then((res) => res.json());
+const getCommentsByUserId = async (postId) =>
+  fetch(`${API}/posts/${postId}/comments`).then((res) => res.json());
+
+async function fetchData() {
+  const posts = await getPostsByUserId(1); // async이니까 promise가 됨 -> 이걸 벗길려면 await을 써야 함
+  console.log("🚀 ~ posts:", posts);
+
+  const postComments = await Promise.all(
+    posts.map((post) => getCommentsByUserId(post.id))
+  );
+
+  const results = [];
+  for (let i = 0; i < posts.length; i++) {
+    const { id: postId, title } = postComments[i];
+    const comments = postComments[i].map(({ id, email, body }) => ({
+      id,
+      email,
+      body,
+    }));
+    results.push = { postId, title, comments };
+  }
+
+  console.log("🚀 ~ results:", JSON.stringify(results, null, " "));
+}
+
+fetchData();
