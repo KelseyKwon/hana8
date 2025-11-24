@@ -14,7 +14,7 @@ function f(cb, delay) {
 function query(sql, cb) {
   try {
     console.log("run sql:", sql);
-    // throw new Error("Error !!");
+    throw new Error("Error !!");
     const result = [{ id: 1 }];
     cb(null, result); // 성공했을떄
   } catch (err) {

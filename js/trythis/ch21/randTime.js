@@ -11,8 +11,8 @@ const depthTimer = (val) =>
   new Promise((resolve, reject) => {
     console.log(`depth1${sec}`, new Date());
     setTimeout(() => {
-      if (sec >= 3) reject(new Error("Already 3-dept!!"));
-      else resolve(sec + 1);
-    }, sec * 1000);
+      if (val >= 3) reject(new Error("Already 3-dept!!"));
+      else resolve(val + 1);
+    }, val * 1000);
   });
 depthTimer(1).then(2, depthTimer).then(depthTimer).catch(console.error);
