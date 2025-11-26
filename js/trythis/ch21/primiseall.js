@@ -51,6 +51,7 @@ const promiseAll = (parr) =>
     let runCnt = parr.length; // parr이 끝날때까지 돌기
     // promise가 여러개이므로 for문을 돌려야 한다.
     for (let i = 0; i < parr.length; i++) {
+      // 0, 1, 2 순서대로 then이 실행이 되지 않고, 끝나는 순서대로 실행이 된다.
       parr[i]
         .then((res) => {
           // resolve로 보낼 result가 필요하다.

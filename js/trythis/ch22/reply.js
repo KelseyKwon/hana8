@@ -46,7 +46,7 @@ async function getPosts(userId) {
   return result;
 }
 
-getPosts(1).then(console.log);
+getPosts(1).then(console.log); co
 */
 
 const API = "https://jsonplaceholder.typicode.com";
@@ -66,7 +66,7 @@ async function fetchData() {
   const results = [];
   for (let i = 0; i < posts.length; i++) {
     const { id: postId, title } = postComments[i];
-    const comments = postComments[i].map(({ id, email, body }) => ({
+    const comments = comment[i].map(({ id, email, body }) => ({
       id,
       email,
       body,

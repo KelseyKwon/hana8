@@ -69,12 +69,13 @@ const myFetch = async (url) => {
 
 const myFetch2 = async (url) => fetch(url).then((Res) => res.json());
 
+//=====비동기 iterator=======//
 function iter(vals) {
   let i = -1;
   return {
     async next() {
       i += 1;
-      return { value: randTime(vals[i]), done: i >= 3 };
+      return { value: await randTime(vals[i]), done: i >= 3 }; // 이 for문이 끝나야지만 await이 종료 -> 값이 세팅된다.
     },
   };
 }
@@ -84,7 +85,7 @@ function iter(vals) {
   const it = iter([1, 2, 3]);
   console.time("iter");
   //   const { value } = it.next(); // 비동기의 value는 무조건 undefned가 나온다.
-  const { value } = await it.next(); // 비동기의 value는 무조건 undefned가 나온다.
+  const { value } = await it.next(); // 이거는 promise!
   console.log("🚀 ~ value:", value);
   //   console.log("1=", await it.next().value());
   //   console.log("2=", await it.next());
