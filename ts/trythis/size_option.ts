@@ -31,7 +31,7 @@ const SIZE = [
   { id: "L", price: 14000 },
   { id: "XL", price: 15000 },
 ] as const;
-type O = { [k in keyof typeof SIZE]: SIZE[k] };
+type O = { [k in keyof typeof SIZE]: typeof SIZE[k] };
 
 const sizeOption1 = { XS: 1, S: 5, M: 2, L: 2, XL: 4 };
 // typeof : 객체 앞에 있으면 sizeOption1을 객체화 시킨다.

@@ -37,6 +37,22 @@ type OBJ = { [k: string | number]: number };
 let o1: OBJ = { 1: 1, a: 2 };
 console.log("🚀 ~ o1:", o1);
 const obj: { [x: string]: number } = { id: 1 };
-// let a = "id";
+// let a = "id"; -> let은 값이 달라질 수 있기 때문에 오류남
+// const a = 'idd'; -> obj에 없는 프로퍼티를 명시해도 오류가 안남
 const a = "id";
 console.log("🚀 ~ obj:", obj[a]);
+
+const someFunc = () => {
+  try {
+    throw new Error("some error!!!!");
+    // throw 'some string error!!!';
+    // throw ['some', 'array', 'error'];
+  } catch (error) {
+    console.log("error >>> ", error, typeof error);
+    if (error instanceof Error)
+      // unknown인 error가 Error로 타입 캐스팅 된다.
+      console.log(error.message);
+    else console.log(error);
+  }
+};
+someFunc();

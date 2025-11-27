@@ -18,10 +18,10 @@ type XX = { [k in (keyof User) | (keyof Dept)]: string | number };
 interface Ud2 {
   // <이 부분을 작성하시오>
   id: number;
-  name?.: string;
-  dname?.: string;
-  captain?.: string;
-  [x: string]: number | string | undefined;
+  name?: string;
+  dname?: string;
+  captain?: string;
+//   [x: string]: number | string | undefined;
   addr: string;
 }
 
@@ -29,4 +29,6 @@ interface Ud2 {
 
 // 다음 코드가 오류가 없으면 통과!
 const ud2: Ud2 = { id: 1, name: "HH", addr: "Seoul" };
+console.log("🚀 ~ ud2:", ud2)
 const ud3: Ud2 = { id: 1, dname: "HH", captain: "HH", addr: "Seoul" };
+console.log("🚀 ~ ud3:", ud3)
