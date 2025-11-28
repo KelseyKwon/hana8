@@ -14,7 +14,8 @@ interface IDept {
 //======ex02========//
 // captain의 type을 IUser로 바꾸기
 type Change<T, K extends keyof T, U> = {
-  [k in keyof T]: k extends keyof U ? U : T[k];
+  //   [k in keyof T]: k extends keyof U ? U : T[k];
+  [k in keyof T]: k extends K ? U : T[k];
 };
 type DeptCaptain = Change<IDept, "captain", IUser>;
 type Err = Change<IDept, "xxx", IUser>; // 존재하지 않는 키는 Error!!!
@@ -28,13 +29,22 @@ type Err = Change<IDept, "xxx", IUser>; // 존재하지 않는 키는 Error!!!
 // }
 
 // IUser와 Idept에서 keyrk 똑같으면 -> 그 타입을 일치시키기
+// type Combine<T, U> = {
+//   [k in keyof T | keyof U]: k extends keyof T
+//     ? k extends keyof U
+//       ? T[k] | U[k]
+//       : T[k]
+//     : k extends keyof U
+//     ? U[k]
+//     : never;
+// };
+type Com = IUser & IDept;
+type xxxx = Exp<Com>;
+type Exp<T> = {
+  [k in keyof T]: T[k];
+};
 type Combine<T, U> = {
-  [k in keyof T | keyof U]: k extends keyof T
-    ? k extends keyof U
-      ? T[k] | U[k]
-      : T[k]
-    : k extends keyof U
-    ? U[k]
-    : never;
+  // 양쪽에
+  [k in keyof (T & U)]: k extends keyof T & keyof U ? T[k] | U[k] : (T & U)[k];
 };
 type ICombined = Combine<IUser, IDept>;
