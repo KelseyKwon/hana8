@@ -49,8 +49,8 @@ const deleteArray1 = (
   );
 
 //function deleteArray<T>(array: T) { ... }
-//const Compo = <h1>aaa</h1>; -> h1 Component이다.  이것처럼 제네릭도 열었으면 닫아야 한다.
-const deleteArray2 = <T>(
+//const Compo = <h1>aaa</h1>; -> h1 Component이다.  따라서 tsx에서는 이것처럼 제네릭도 열었으면 닫아야 한다.
+const deleteArray2 = <T>( // => ts 파일에서는 그냥 이렇게 쓸 수 있다. 
   array: T[],
   startOrKey: number | keyof T, // TUser가 왔으면 T가 TUser로 치환됨.
   endOrValue: number | T[keyof T] = array.length
@@ -79,4 +79,4 @@ assert.deepStrictEqual(deleteArray(arr, 1, 3), [1, 4]);
 assert.deepStrictEqual(deleteArray(users, 2), [Hong, Kim]);
 assert.deepStrictEqual(deleteArray(users, "id", 2), [Hong, Lee]);
 
-console.log(deleteArray2(["A", "B", "C"], 1, 2)); // ['A', 'C'] 가 된다.
+console.log(deleteArray2(["A", "B", "C"], 1, 2)); // ['A', 'C'] 가 된다. = > 뒤에 T자리에 string이 들어간다. 하지만 이렇게 명시를 안해줘도 string array를 줬기 떄문에 ... string으로 인식!

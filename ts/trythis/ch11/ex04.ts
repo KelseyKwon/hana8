@@ -1,6 +1,7 @@
 type Item = { item: string; price: number };
 type ItemPrice<T, U> = {
-  [k in keyof T]: k extends "item" ? Extract<keyof U, T[k]> : T[k];
+//   [k in keyof T]: k extends "item" ? Extract<keyof U, T[k]> : T[k];
+  [k in keyof T]: k extends "item" ? keyof U: T[k];
 };
 
 const stock = { X: 1, Y: 2, Z: 30 };

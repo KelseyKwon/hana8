@@ -52,7 +52,7 @@ const someFunc = () => {
     if (error instanceof Error)
       // unknown인 error가 Error로 타입 캐스팅 된다.
       console.log(error.message);
-    else console.log(error);
+    else console.log(JSON.stringify (error));
   }
 };
 someFunc();
