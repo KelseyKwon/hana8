@@ -48,7 +48,7 @@ function throttle<F extends unknown[]>(
   // setTimeout의 리턴 타입을 내놔라!
   let timer: ReturnType<typeof setTimeout> | null;
 
-  //   return (...args: Parameters<F>) => {
+  //   return (...args: Parameters<F>) => { -> 여기서 핵심만 제네릭으로 잡기.
   return (...args: F) => {
     if (timer !== null) return;
     // 콜백을 직접 호출해준다.

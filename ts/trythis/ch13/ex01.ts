@@ -24,6 +24,7 @@ type PartialRequired<T, R extends keyof T> = {
   [k in keyof T as k extends R ? k : never]-?: T[k];
 };
 
+//
 type User = PartialRequired<IUser, "name">; // name만 required
 // type User2 = PartialRequired<IUser, 'addr'>; // name만 required
 

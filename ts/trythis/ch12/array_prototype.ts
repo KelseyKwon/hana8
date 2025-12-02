@@ -13,6 +13,7 @@ declare global {
     // isIncludes에 초기값을 할당했으므로 optional로 할당!
     //   'id' | 'name'     T['id'] | T
     filterBy<K extends keyof T>(
+      // prop과 value의 연결고리를 잇기
       prop: K,
       value: T[K],
       isIncludes?: boolean
@@ -29,6 +30,7 @@ declare global {
     // Partial : return이 빈 어레이 또는 객체가 될 수 있다. (optional이 붙음)
     groupByFn<K extends T[keyof T] & PropertyKey>(
       gfn: (a: T) => K
+      // 빈 객체나 빈 배열로 나갈 수 있기 때문에 Partial로 쓴다.
     ): Partial<Record<K, T[]>>;
     groupBy<K extends T[keyof T] & PropertyKey>(
       prop: keyof T
@@ -57,6 +59,7 @@ console.log(users.mapBy("name")); // ['Hong', 'Lee', 'Kim']);
 // };
 //==== generic을 안 쓰는 방법====//
 Array.prototype.filterBy = function (prop, value, isIncludes = false) {
+  // a가 이미 this 의 type인 것을 filter가 추론이 가능하므로 따로 정의하지 않아도 된다.
   return this.filter((a) =>
     isIncludes ? a[prop]?.includes(value) : a[prop] === value
   );
