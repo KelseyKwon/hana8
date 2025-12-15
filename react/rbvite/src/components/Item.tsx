@@ -91,7 +91,7 @@ export default function Item({item, removeItem, saveItem, toggleAdding}: Props) 
     <form onSubmit={editItem} className='flex gap-1'>
           {/* <input type='number' ref={idRef} placeholder='id...' className='w-14'/> */}
           <LabelInput ref={nameRef} defaultValue={item.name} onChange={checkDirty} placeholder='name...' />
-          <LabelInput type = 'number'ref={priceRef} defaultValue={item.price} onChange={checkDirty}  placeholder='price...' />
+          <LabelInput type = 'number' ref={priceRef} defaultValue={item.price} onChange={checkDirty}  placeholder='price...' />
           <Button onClick={cancelEdit} type= 'reset' className=''><RotateCcwIcon /></Button>
           {/* {hasDirty && (<Button type= 'submit' className='text-blue-500' ><FilePlusIcon>
             </FilePlusIcon></Button>)} */}

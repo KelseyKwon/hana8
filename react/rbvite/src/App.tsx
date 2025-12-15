@@ -59,7 +59,7 @@ function App() {
 // id가 있다면 수정, 없다면 만들기
 const saveItem = ({ id, name, price }: ItemType) => {
   // id로 비교하는 것이 아니고, item으로 비교해야 한다!
-  const item = id && session.cart.find(item => item.id === id);
+  const item = id && session.cart.find((item) => item.id === id);
 
   if (item) {
     // item을 찾음 -> 수정!

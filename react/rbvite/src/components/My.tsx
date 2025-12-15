@@ -1,9 +1,9 @@
 import type { ItemType, LoginFunction, Session } from '../App';
-import Profile from '../Profile';
+import Profile, { type ProfileHandler } from '../Profile';
 import Login from '../Login';
 import Button from './ui/Button';
 import { PlusIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Item from './Item';
 
 type Prop = {
@@ -19,6 +19,7 @@ type Prop = {
 
 export default function My({ session, logout, login, removeItem, saveItem }: Prop) {
   const [isAdding, setAdding]= useState(false);
+  const profileHandlerRef = useRef<ProfileHandler>(null);
   const item101 = session.cart.find(item => item.id === 101);
   // useEffect -> dom이 그려지고 나서 호출이 된다!
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function My({ session, logout, login, removeItem, saveItem }: Pro
 return (
     <>
       {session?.loginUser ? (
-        <Profile loginUser={session.loginUser} logout={logout} />
+        <Profile loginUser={session.loginUser} logout={logout} ref = {profileHandlerRef} />
       ) : (
         <Login login={login} />
       )}
