@@ -12,14 +12,14 @@ export type ItemType = {
 
 export type LoginUser = { id: number; name: string; age: number };
 export type Session = {
-  loginUser: { id: number; name: string; age: number } | null;
+  loginUser: LoginUser | null;
   cart: ItemType[];
 };
 export type LoginFunction = (name: string, age: number) => void; // 이 타입을 계속 쓰겠다!
 
 const DefaultSession: Session = {
-  loginUser: null,
-  // loginUser: { id: 1, name: 'Hong', age: 33 },
+  // loginUser: null,
+  loginUser: { id: 1, name: 'Hong', age: 33 },
 
   cart: [
     { id: 100, name: '라면', price: 3000 },
@@ -81,9 +81,14 @@ function App() {
   }
 
   return (
-    <div className='grid place-items-center h-screen'>
+    <div className='grid place-items-center h-screen mx-2'>
       <h1 className='text-3xl'>count: {count}</h1>
-      <My session={session} logout={logout} login={login} removeItem={removeItem} saveItem={saveItem} />
+      <My 
+      session={session} 
+      logout={logout} 
+      login={login} 
+      removeItem={removeItem} 
+      saveItem={saveItem} />
       <Hello
         name={session.loginUser?.name}
         age={session.loginUser?.age}

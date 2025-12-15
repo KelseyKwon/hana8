@@ -3,7 +3,7 @@ import type { ItemType } from "../App"
 import Small from "./ui/Small";
 import Button from "./ui/Button";
 import LabelInput from "./ui/LabelInput";
-import { FilePlusIcon } from "lucide-react";
+import { FilePlusIcon, RotateCcwIcon, SaveIcon } from "lucide-react";
 
 type Props = {
   // App에 정의된 Item
@@ -16,14 +16,18 @@ type Props = {
 
 export default function Item({item, removeItem, saveItem}: Props) {
   // type을 잘 정의하기!
-  const [isEditing, setEditing] = useState(false);
+  // setEditing은 아이템이 0일때 true가 된다. item.id가 없다면, true가 된다. 
+  const [isEditing, setEditing] = useState(!item.id);
   const [hasDirty, setDirty] = useState(false);
-
     // const idRef = useRef<HTMLInputElement>(null)
     const nameRef = useRef<HTMLInputElement>(null)
     const priceRef = useRef<HTMLInputElement>(null)
 
-    const {id, name, price} = item;
+    const checkDirty = () => {
+      // if (nameRef.current && priceRef.current) {
+      // 처음에 전달된 아이템의 이름이 다르거나, 전달딘 가겨이 다르면
+      setDirty((item.name !== nameRef.current?.value || item.price !== Number(priceRef.current?.value)));
+    }
   
     const editItem = (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -48,31 +52,54 @@ export default function Item({item, removeItem, saveItem}: Props) {
       if (msg) {
         alert(msg);
         if (ref && ref.current) ref.current.focus();
+        return;
       }
-       saveItem({ id: 0, name: name ?? '', price: Number(price) });
+       saveItem({ id: item.id, name: name ?? '', price: Number(price) });
       if (nameRef.current && priceRef.current) {
         nameRef.current.value = '';
         priceRef.current.value = '';
         nameRef.current.focus();
       }
+
+    setEditing(false);
     }
 
-  return <>
-  <Small>{id}.</Small>
-            {name}
-            <Small>{price.toLocaleString()}원</Small>
-            <Button onClick={() => removeItem(id)} className='ml-2 px-1 py-0 text-sm bg-red-500 hover:bg-red-600 text-white shadow2-lg hover:shadow-2xl active:scale-150 transition duration-300'>X</Button>
-      
-      <form onSubmit={editItem} className='flex gap-1'>
-          {/* <input type='number' ref={idRef} placeholder='id...' className='w-14'/> */}
-          <LabelInput ref={nameRef} placeholder='name...' />
-          <LabelInput type = 'number'ref={priceRef} placeholder='price...' />
-          <Button type= 'submit' className='text-blue-500'><FilePlusIcon>
-            </FilePlusIcon></Button>
-        </form>'
-  </>;
+  const makeEdit = () => {
+    setEditing(!isEditing);
+    // if (nameRef.current && priceRef.current) {
+    //   nameRef.current.value = item.name; //dom이기 때문에 nullable하다.
+    //   priceRef.current.value = String(item.price); //dom이기 때문에 nullable하다. toString이면 null일 수 있으니까 String()으로 하기. 
+    // }
+  }
 
-  
+  // reset할 떄 값을 원 위치로 돌리는 것이 가장 중요하다!
+  const cancelEdit = () => {
+    setEditing(!isEditing);
+    if (nameRef.current && priceRef.current) {
+    nameRef.current.value = item.name;
+    priceRef.current.value = String(item.price);
+  }
+};
+
+  return (<>
+  {/* isEditing이 아니면 수정을,  */}
+  {!isEditing ? (
+    <form onSubmit={editItem} className='flex gap-1'>
+          {/* <input type='number' ref={idRef} placeholder='id...' className='w-14'/> */}
+          <LabelInput ref={nameRef} defaultValue={item.name} onChange={checkDirty} placeholder='name...' />
+          <LabelInput type = 'number'ref={priceRef} defaultValue={item.price} onChange={checkDirty}  placeholder='price...' />
+          <Button onClick={cancelEdit} type= 'reset' className=''><RotateCcwIcon /></Button>
+          {/* {hasDirty && (<Button type= 'submit' className='text-blue-500' ><FilePlusIcon>
+            </FilePlusIcon></Button>)} */}
+            <Button type= 'submit' className='text-blue-500' disabled={!hasDirty} >{item.id? <SaveIcon /> : <FilePlusIcon />}
+            </Button>
+        </form>) : (<>
+        <Small>{item.id}.</Small>
+        <button onClick={(makeEdit)}className="border-0 p-0 hover:bg-inherit hover:underline" >{item.name}</button>
+            <Small>{item.price.toLocaleString()}원</Small>
+            <Button onClick={() => removeItem(item.id)} className='ml-2 px-1 py-0 text-sm bg-red-500 hover:bg-red-600 text-white shadow2-lg hover:shadow-2xl active:scale-150 transition duration-300'>X</Button></>)
+  }
+  </>)
 }
 
 // import { useState } from "react";
@@ -101,4 +128,3 @@ export default function Item({item, removeItem, saveItem}: Props) {
 //   }
 //     <>Item</>
 // } 
-// // addItem, editItem, removeItem item
