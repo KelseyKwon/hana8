@@ -1,10 +1,16 @@
-import React, { useEffect, useImperativeHandle, useRef, type FormEvent } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, type FormEvent, type RefObject } from 'react';
 import Button from './components/ui/Button';
 import type { LoginFunction } from './App';
 import LabelInput from './components/ui/LabelInput';
 
+export type LoginHandler = {
+  validate: () => void;
+  focusName: () => void;
+}
+
 type Props = {
   login: LoginFunction;
+  ref: RefObject<LoginHandler | null>;
 };
 
 export type LoginHandle = {
@@ -12,26 +18,38 @@ export type LoginHandle = {
   focusAge: () => void;
 }
 
-export default function Login({ login, ref }: Props & {ref?: React.Ref<LoginHandle> }) {
+// ref : 바깥으로 내보내기 위한 ref
+export default function Login({ login , ref}: Props) {
   // const [name, setName] = useState('');
   // const [age, setAge] = useState(0);
 
   const nameRef = useRef<HTMLInputElement>(null);
   const ageRef = useRef<HTMLInputElement>(null);
 
+
   useImperativeHandle(ref, () => ({
-    focusId: () => {
+    validate() {
+    if(!nameRef.current?.value) {
+      alert('Input the name!');
       nameRef.current?.focus();
-    },
-    focusAge: () => {
-      ageRef.current?.focus();
+      return false;
     }
-  }))
+    if(!ageRef.current?.value) {
+      alert('Input the age!');
+      ageRef.current?.focus();
+      return false;
+    }
+
+    return true;
+  }, focusName() {
+      nameRef.current?.focus();
+    }
+  }));
 
   const makeLogin = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(nameRef.current?.value && ageRef.current?.value)
-    login(nameRef.current.value, Number(ageRef.current.value))
+    // if(nameRef.current?.value && ageRef.current?.value)
+    login(nameRef.current?.value ?? '', Number(ageRef.current?.value))
   }
 
   // dom이 paint 될 떄 그려진다.  => 바로 첫 페이지에서 포커스가 됨!

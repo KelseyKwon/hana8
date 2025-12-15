@@ -1,15 +1,16 @@
 import type { ItemType, LoginFunction, Session } from '../App';
 import Profile, { type ProfileHandler } from '../Profile';
-import Login from '../Login';
+import Login, { type LoginHandler } from '../Login';
 import Button from './ui/Button';
 import { PlusIcon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import Item from './Item';
 
 type Prop = {
   session: Session;
   logout: () => void;
   login: LoginFunction;
+  loginHandlerRef: RefObject<LoginHandler | null>;
   removeItem : (id: number) => void;
   saveItem: ({id, name, price} : ItemType) => void; // destructuring
   
@@ -17,7 +18,7 @@ type Prop = {
 
 // type UR<T> = {current: T | null}
 
-export default function My({ session, logout, login, removeItem, saveItem }: Prop) {
+export default function My({ session, logout, login, loginHandlerRef, removeItem, saveItem }: Prop) {
   const [isAdding, setAdding]= useState(false);
   const profileHandlerRef = useRef<ProfileHandler>(null);
   const item101 = session.cart.find(item => item.id === 101);
@@ -31,7 +32,7 @@ return (
       {session?.loginUser ? (
         <Profile loginUser={session.loginUser} logout={logout} ref = {profileHandlerRef} />
       ) : (
-        <Login login={login} />
+        <Login login={login} ref={loginHandlerRef} />
       )}
       <hr />
       <a href='#!' onClick={(e) => {

@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import Button from './ui/Button';
+import { useCounter } from '../hooks/CounterContext';
 
 // type Prop = { name: string; children: ReactNode };
 // children을 포함하고 있는 utility type이 있다. 아래 코드는 위와 같다.
@@ -9,7 +10,6 @@ type Prop = PropsWithChildren<{
   name?: string;
   age?: number;
   // setCount: (cb: (c: number) => number) => void;
-  plusCount: () => void;
 }>;
 
 // prop이 객체와 동시에 Hello가 관리하는 상태가 된다. name -> state! readonly가 됨.
@@ -17,8 +17,8 @@ export default function Hello({
   name = 'guest',
   age = 0,
   children,
-  plusCount,
 }: Prop) {
+  const {plusCount} = useCounter();
   return (
     <div className='border border-red-300 p-3 text-center'>
       <h2 className='text-2xl'>

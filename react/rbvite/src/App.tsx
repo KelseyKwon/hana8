@@ -2,7 +2,8 @@ import { useRef, useState } from 'react';
 import './App.css';
 import Hello from './components/Hello';
 import My from './components/My';
-import type { LoginHandle } from './Login';
+import type { LoginHandler } from './Login';
+import { useCounter } from './hooks/CounterContext';
 
 export type ItemType = {
   id: number;
@@ -31,15 +32,17 @@ const DefaultSession: Session = {
 };
 
 function App() {
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0); -> 대신에 context에서 가져오면 된다! -> 냉장고에 count & pluscount을 넣은 것이다. 
+  const { count } = useCounter();
   const [session, setSession] = useState<Session>(DefaultSession);
+  
   // ref를 만든다
-  const loginRef = useRef<LoginHandle>(null);
+  const loginHandlerRef = useRef<LoginHandler>(null);
 
   // plusCount(100)을 하면 그냥 100으로 설정이 된다.
   // 왜 함수를 쓰냐? Batch 처리 떄문에, 17ms동안은 버튼을 4번 눌러도 count의 값이 1이 되기 때문이다.
   // void를 리턴한다. 따라서 이걸 쓰는 곳에서는 return type을 void로 설정해야 한다.
-  const plusCount = () => setCount((prevCount) => prevCount + 1);
+  // const plusCount = () => setCount((prevCount) => prevCount + 1);
 
   const logout = () => {
     // session.loginUser = null; fail!!
@@ -49,11 +52,7 @@ function App() {
   const login: LoginFunction = (name, age) => {
     // 기존 세션은 내비둬야 한다!
     // if (!name || !age || 0) return alert('Input Name and Age, plz!');
-    if (!name || !age || 0) {
-      loginRef.current?.focusId();
-      loginRef.current?.focusAge();
-      return alert('Input Name and Age, plz!');}
-    // if (loginRef.current...App.)
+    if (loginHandlerRef.current?.validate())
     setSession({ ...session, loginUser: { id: 1, name, age } });
   };
 
@@ -108,12 +107,12 @@ const saveItem = ({ id, name, price }: ItemType) => {
       session={session} 
       logout={logout} 
       login={login} 
+      loginHandlerRef={loginHandlerRef}
       removeItem={removeItem} 
       saveItem={saveItem} />
       <Hello
         name={session.loginUser?.name}
         age={session.loginUser?.age}
-        plusCount={plusCount}
       >
         {/* hello의 children이 된다.  */}
         반갑습니다.

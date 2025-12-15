@@ -9,6 +9,7 @@ type Props = {
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     placeholder?: string;
     className?: string;
+    required?: boolean;
 }
 
 
@@ -20,6 +21,7 @@ export default function LabelInput({
   defaultValue,
   placeholder,
   className,
+  required,
 }: Props) {
     // useId : ID라는 map이 있는데, 키가 중복되지 않게 관리해준다. 
 
@@ -43,7 +45,7 @@ export default function LabelInput({
         onChange={onChange}
         placeholder={placeholder}
         className={`w-full ${className}`}
-        required
+        required={required}
       />
     </div>
   );
