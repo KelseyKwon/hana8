@@ -32,6 +32,7 @@ export default defineConfig([
       ...reactHooks.configs.recommended.rules,
       'react/no-array-index-key': 'warn',
       'react/jsx-key': 'error',
+      'react-refresh/only-export-components': 'off',
     },
   },
 ]);

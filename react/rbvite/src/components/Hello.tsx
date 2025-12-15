@@ -1,24 +1,20 @@
 import type { PropsWithChildren } from 'react';
 import Button from './ui/Button';
 import { useCounter } from '../hooks/CounterContext';
+import { useSession } from '../hooks/SessionContext';
 
 // type Prop = { name: string; children: ReactNode };
 // children을 포함하고 있는 utility type이 있다. 아래 코드는 위와 같다.
 
 // T & { children: ReactNode};
-type Prop = PropsWithChildren<{
-  name?: string;
-  age?: number;
-  // setCount: (cb: (c: number) => number) => void;
-}>;
 
 // prop이 객체와 동시에 Hello가 관리하는 상태가 된다. name -> state! readonly가 됨.
-export default function Hello({
-  name = 'guest',
-  age = 0,
-  children,
-}: Prop) {
+export default function Hello({children} : PropsWithChildren) {
   const {plusCount} = useCounter();
+  const {session: {loginUser}, } = useSession();
+
+  // null이면 destructuring이 안됨 -> 최소한 빈 배열은 줘야 한다!
+  const {name = 'Guest', age} = loginUser || {};
   return (
     <div className='border border-red-300 p-3 text-center'>
       <h2 className='text-2xl'>

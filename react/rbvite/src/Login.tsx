@@ -1,17 +1,12 @@
-import React, { useEffect, useImperativeHandle, useRef, type FormEvent, type RefObject } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, type FormEvent } from 'react';
 import Button from './components/ui/Button';
-import type { LoginFunction } from './App';
 import LabelInput from './components/ui/LabelInput';
+import { useSession } from './hooks/SessionContext';
 
 export type LoginHandler = {
   validate: () => void;
   focusName: () => void;
 }
-
-type Props = {
-  login: LoginFunction;
-  ref: RefObject<LoginHandler | null>;
-};
 
 export type LoginHandle = {
   focusId: () => void;
@@ -19,10 +14,10 @@ export type LoginHandle = {
 }
 
 // ref : 바깥으로 내보내기 위한 ref
-export default function Login({ login , ref}: Props) {
+export default function Login() {
   // const [name, setName] = useState('');
   // const [age, setAge] = useState(0);
-
+  const {login, loginHandlerRef: ref} = useSession();
   const nameRef = useRef<HTMLInputElement>(null);
   const ageRef = useRef<HTMLInputElement>(null);
 

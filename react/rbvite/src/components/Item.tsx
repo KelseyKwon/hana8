@@ -1,23 +1,21 @@
 import { useRef, useState, type FormEvent, type RefObject } from "react";
-import type { ItemType } from "../App"
+
 import Small from "./ui/Small";
 import Button from "./ui/Button";
 import LabelInput from "./ui/LabelInput";
 import { FilePlus2Icon, RotateCcwIcon, SaveIcon } from "lucide-react";
+import { useSession, type ItemType } from "../hooks/SessionContext";
 
 type Props = {
   // App에 정의된 Item
   item: ItemType;
-  removeItem ?: (id: number) => void;
-  // addItem: (id: number, name:string, price:number) => void;
-  // addItem: (item : Item) => void; // destructuring
-  saveItem: ({id, name, price} : ItemType) => void; // destructuring
   toggleAdding ?: () => void;
 }
 
-export default function Item({item, removeItem, saveItem, toggleAdding}: Props) {
+export default function Item({item, toggleAdding}: Props) {
   // type을 잘 정의하기!
   // setEditing은 아이템이 0일때 true가 된다. item.id가 없다면, true가 된다. 
+  const {removeItem, saveItem} = useSession();
   const [isEditing, setEditing] = useState(!item.id);
   const [hasDirty, setDirty] = useState(false);
     // const idRef = useRef<HTMLInputElement>(null)
