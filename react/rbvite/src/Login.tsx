@@ -1,4 +1,4 @@
-import { useEffect, useRef, type FormEvent } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, type FormEvent } from 'react';
 import Button from './components/ui/Button';
 import type { LoginFunction } from './App';
 import LabelInput from './components/ui/LabelInput';
@@ -6,12 +6,27 @@ import LabelInput from './components/ui/LabelInput';
 type Props = {
   login: LoginFunction;
 };
-export default function Login({ login }: Props) {
+
+export type LoginHandle = {
+  focusId: () => void;
+  focusAge: () => void;
+}
+
+export default function Login({ login, ref }: Props & {ref?: React.Ref<LoginHandle> }) {
   // const [name, setName] = useState('');
   // const [age, setAge] = useState(0);
 
   const nameRef = useRef<HTMLInputElement>(null);
   const ageRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focusId: () => {
+      nameRef.current?.focus();
+    },
+    focusAge: () => {
+      ageRef.current?.focus();
+    }
+  }))
 
   const makeLogin = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,7 +57,7 @@ export default function Login({ login }: Props) {
             type='number'
             id='age'
             ref={ageRef}
-            placeholder='user name...'
+            placeholder='age...'
             className='w-full'
             required
           />

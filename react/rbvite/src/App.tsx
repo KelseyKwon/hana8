@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 import Hello from './components/Hello';
 import My from './components/My';
+import type { LoginHandle } from './Login';
 
 export type ItemType = {
   id: number;
@@ -11,6 +12,7 @@ export type ItemType = {
 };
 
 export type LoginUser = { id: number; name: string; age: number };
+
 export type Session = {
   loginUser: LoginUser | null;
   cart: ItemType[];
@@ -31,6 +33,8 @@ const DefaultSession: Session = {
 function App() {
   const [count, setCount] = useState(0);
   const [session, setSession] = useState<Session>(DefaultSession);
+  // ref를 만든다
+  const loginRef = useRef<LoginHandle>(null);
 
   // plusCount(100)을 하면 그냥 100으로 설정이 된다.
   // 왜 함수를 쓰냐? Batch 처리 떄문에, 17ms동안은 버튼을 4번 눌러도 count의 값이 1이 되기 때문이다.
@@ -44,7 +48,12 @@ function App() {
 
   const login: LoginFunction = (name, age) => {
     // 기존 세션은 내비둬야 한다!
-    if (!name || !age || 0) return alert('Input Name and Age, plz!');
+    // if (!name || !age || 0) return alert('Input Name and Age, plz!');
+    if (!name || !age || 0) {
+      loginRef.current?.focusId();
+      loginRef.current?.focusAge();
+      return alert('Input Name and Age, plz!');}
+    // if (loginRef.current...App.)
     setSession({ ...session, loginUser: { id: 1, name, age } });
   };
 

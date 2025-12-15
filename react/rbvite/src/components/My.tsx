@@ -34,7 +34,11 @@ return (
         <Login login={login} />
       )}
       <hr />
-      {item101?.name}
+      <a href='#!' onClick={(e) => {
+        e.preventDefault();
+        profileHandlerRef.current?.showLoginUser();
+        profileHandlerRef.current?.logout();
+      }}>{item101?.name}</a>
       <ul>
         {/* destructuring! */}
 

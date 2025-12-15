@@ -3,7 +3,7 @@ import type { ItemType } from "../App"
 import Small from "./ui/Small";
 import Button from "./ui/Button";
 import LabelInput from "./ui/LabelInput";
-import { FilePlus2Icon, FilePlusIcon, RotateCcwIcon, SaveIcon } from "lucide-react";
+import { FilePlus2Icon, RotateCcwIcon, SaveIcon } from "lucide-react";
 
 type Props = {
   // App에 정의된 Item
@@ -87,7 +87,7 @@ export default function Item({item, removeItem, saveItem, toggleAdding}: Props) 
 
   return (<>
   {/* isEditing이 아니면 수정을,  */}
-  {!isEditing ? (
+  {isEditing ? (
     <form onSubmit={editItem} className='flex gap-1'>
           {/* <input type='number' ref={idRef} placeholder='id...' className='w-14'/> */}
           <LabelInput ref={nameRef} defaultValue={item.name} onChange={checkDirty} placeholder='name...' />
