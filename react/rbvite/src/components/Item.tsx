@@ -3,18 +3,19 @@ import type { ItemType } from "../App"
 import Small from "./ui/Small";
 import Button from "./ui/Button";
 import LabelInput from "./ui/LabelInput";
-import { FilePlusIcon, RotateCcwIcon, SaveIcon } from "lucide-react";
+import { FilePlus2Icon, FilePlusIcon, RotateCcwIcon, SaveIcon } from "lucide-react";
 
 type Props = {
   // App에 정의된 Item
   item: ItemType;
-  removeItem : (id: number) => void;
+  removeItem ?: (id: number) => void;
   // addItem: (id: number, name:string, price:number) => void;
   // addItem: (item : Item) => void; // destructuring
   saveItem: ({id, name, price} : ItemType) => void; // destructuring
+  toggleAdding ?: () => void;
 }
 
-export default function Item({item, removeItem, saveItem}: Props) {
+export default function Item({item, removeItem, saveItem, toggleAdding}: Props) {
   // type을 잘 정의하기!
   // setEditing은 아이템이 0일때 true가 된다. item.id가 없다면, true가 된다. 
   const [isEditing, setEditing] = useState(!item.id);
@@ -62,6 +63,8 @@ export default function Item({item, removeItem, saveItem}: Props) {
       }
 
     setEditing(false);
+    setDirty(false);
+    if (toggleAdding) toggleAdding();
     }
 
   const makeEdit = () => {
@@ -78,6 +81,7 @@ export default function Item({item, removeItem, saveItem}: Props) {
     if (nameRef.current && priceRef.current) {
     nameRef.current.value = item.name;
     priceRef.current.value = String(item.price);
+    if (toggleAdding) toggleAdding();
   }
 };
 
@@ -91,13 +95,20 @@ export default function Item({item, removeItem, saveItem}: Props) {
           <Button onClick={cancelEdit} type= 'reset' className=''><RotateCcwIcon /></Button>
           {/* {hasDirty && (<Button type= 'submit' className='text-blue-500' ><FilePlusIcon>
             </FilePlusIcon></Button>)} */}
-            <Button type= 'submit' className='text-blue-500' disabled={!hasDirty} >{item.id? <SaveIcon /> : <FilePlusIcon />}
+            {hasDirty && (
+            <Button
+              type='submit'
+              className='text-blue-500'
+              disabled={!hasDirty}
+            >
+              {item.id ? <SaveIcon /> : <FilePlus2Icon />}
             </Button>
+          )}
         </form>) : (<>
         <Small>{item.id}.</Small>
         <button onClick={(makeEdit)}className="border-0 p-0 hover:bg-inherit hover:underline" >{item.name}</button>
             <Small>{item.price.toLocaleString()}원</Small>
-            <Button onClick={() => removeItem(item.id)} className='ml-2 px-1 py-0 text-sm bg-red-500 hover:bg-red-600 text-white shadow2-lg hover:shadow-2xl active:scale-150 transition duration-300'>X</Button></>)
+            <Button onClick={() => {if (removeItem) removeItem(item.id)}} className='ml-2 px-1 py-0 text-sm bg-red-500 hover:bg-red-600 text-white shadow2-lg hover:shadow-2xl active:scale-150 transition duration-300'>X</Button></>)
   }
   </>)
 }

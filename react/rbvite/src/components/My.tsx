@@ -3,7 +3,7 @@ import Profile from '../Profile';
 import Login from '../Login';
 import Button from './ui/Button';
 import { PlusIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Item from './Item';
 
 type Prop = {
@@ -19,6 +19,11 @@ type Prop = {
 
 export default function My({ session, logout, login, removeItem, saveItem }: Prop) {
   const [isAdding, setAdding]= useState(false);
+  const item101 = session.cart.find(item => item.id === 101);
+  // useEffect -> dom이 그려지고 나서 호출이 된다!
+  useEffect(() => {
+    console.log(item101)
+  }, [item101])
 
 return (
     <>
@@ -28,6 +33,7 @@ return (
         <Login login={login} />
       )}
       <hr />
+      {item101?.name}
       <ul>
         {/* destructuring! */}
 
@@ -42,8 +48,8 @@ return (
           {isAdding ? (
             <Item
               item={{ id: 0, name: 'New Item', price: 3000 }}
-              removeItem={removeItem}
               saveItem={saveItem}
+              toggleAdding={() => setAdding(false)}
             />
           ) : (
             <Button onClick={() => setAdding(true)} className=''>

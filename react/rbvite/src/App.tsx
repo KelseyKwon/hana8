@@ -56,29 +56,41 @@ function App() {
     setSession({...session, cart: session.cart.filter(item => item.id !== id)})
   }
 
-  // id가 있다면 수정, 없다면 만들기
-  const saveItem = ({id, name, price}: ItemType) => {
-    // id로 비교하는 것이 아니고, item으로 비교해야 한다!
-    const item = id && session.cart.find(item => item.id === id);
+// id가 있다면 수정, 없다면 만들기
+const saveItem = ({ id, name, price }: ItemType) => {
+  // id로 비교하는 것이 아니고, item으로 비교해야 한다!
+  const item = id && session.cart.find(item => item.id === id);
 
-   if (item) {
-      // item을 찾음 -> 수정!
-      item.name = name;
-      item.price = price;
-    } else {
-      
-      // max는 반드시 iterator로 펼쳐서 받아야 한다. 
-      // ...와 같은 spread 연산자를 사용하면 id: Math.max([100, 200, 300]) 안에 배열이 펼쳐져서 나온다. 
-      const newItem = { id: Math.max(...session.cart.map(item => item.id), 0) + 1, name, price}
-      // cart의 주소도 안바뀐다 -> push만 하면 주소가 안바뀐다! -> 즉, 이것을 참조하는 곳은 이 것이 바뀐지 모른다. 
-      session.cart.push(newItem);
-    }
-
+  if (item) {
+    // item을 찾음 -> 수정!
+    // item.name = name;
+    // item.price = price;
+    setSession({
+      ...session,
+      cart: session.cart.map(item =>
+        item.id === id ? { id, name, price } : item
+      )
+    });
+  } else {
+    // max는 반드시 iterator로 펼쳐서 받아야 한다. 
+    // ...와 같은 spread 연산자를 사용하면 id: Math.max([100, 200, 300]) 안에 배열이 펼쳐져서 나온다. 
+    const newItem = {
+      id: Math.max(...session.cart.map(item => item.id), 0) + 1,
+      name,
+      price
+    };
+    // cart의 주소도 안바뀐다 -> push만 하면 주소가 안바뀐다! 
+    // -> 즉, 이것을 참조하는 곳은 이 것이 바뀐지 모른다. 
+    // session.cart.push(newItem); // ❌ 하지 않음
+    
     // 이 두 줄을 써도 되냐? cart의 주소는 바뀌지 않는다. 
     // session.cart.push(newItem);
-    // setSession({ ... session}) 
-    setSession({...session, cart: [...session.cart]})
+    // setSession({ ... session }) 
+    setSession({ ...session, cart: [...session.cart, newItem] });
   }
+
+
+}
 
   return (
     <div className='grid place-items-center h-screen mx-2'>
