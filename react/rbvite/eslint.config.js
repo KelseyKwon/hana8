@@ -33,6 +33,7 @@ export default defineConfig([
       'react/no-array-index-key': 'warn',
       'react/jsx-key': 'error',
       'react-refresh/only-export-components': 'off',
+      'react-hooks/exhaustive-deps': 'off',
     },
   },
 ]);

@@ -39,11 +39,18 @@ export default function My() {
     setInterval(() => setBadSec(p => p + 1), 1000)
   }, [])
   
-  useInterval(() => setGoodSec(p => p + 1), 1000);
+  const ff = (n: number) => {
+    console.log('🚀 ~ n:', n, goodSec); // n은 영원히 1 (: )
+    // setGoodSec(n + 1); // 위 goodSec는 영원히 0
+    setGoodSec((p) => p + 1);
+  };
+  // goodSec + 1 의 값이
+  console.log('🚀 ~ goodSec:', goodSec);
+  useInterval(ff, 1000, goodSec + 1);
 
 return (
   <>
-  <h1 className='text-2xl'>bad: {badSec}, good: {goodSec}</h1>
+  <h1 className='text-xl'>bad: {badSec}, good: {goodSec}</h1>
       {session?.loginUser ? <Profile ref={profileHandlerRef} /> : <Login />}
       <hr />
       <a href='#!' onClick={(e) => {
