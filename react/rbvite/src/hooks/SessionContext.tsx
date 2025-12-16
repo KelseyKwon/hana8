@@ -1,4 +1,4 @@
-import { createContext, use, useRef, useState, type PropsWithChildren, type RefObject } from "react";
+import { createContext, use, useReducer, useRef, type PropsWithChildren, type RefObject } from "react";
 import type { LoginHandler } from "../Login";
 
 export type ItemType = {
@@ -46,40 +46,48 @@ const SessionContext = createContext<SessionContextValue>(
 );
 
 
+type Action = {type: 'LOGIN', payload: LoginUser} 
+// 여기서 payload의 타입을 정의를 안해주면 optional이 된다. -> 이거는 안 좋음!
+| {type: 'LOGOUT', payload: null}
+// | {type: 'ADD-ITEM', payload: Omit<ItemType, 'id'>} 
+| {type: 'ADD-ITEM', payload: ItemType}
+| {type: 'EDIT-ITEM', payload: ItemType}
+| {type: 'REMOVE-ITEM', payload: number}
 
-
+const reducer = (session: Session, {type, payload} : Action) => {
+  switch (type) {
+    case 'LOGIN': 
+    case 'LOGOUT': return {...session, loginUser: payload}
+    case 'ADD-ITEM':
+      return {...session, cart: [...session.cart, payload]}
+    case 'EDIT-ITEM': 
+      return {...session, cart: session.cart.map((item) => (item.id === payload.id) ? payload : item)}
+    case 'REMOVE-ITEM': return {...session, cart: session.cart.filter(item => item.id !== payload)} 
+    default:
+      return session;
+  }
+};
 
 // value
 export function SessionProvider({children}: PropsWithChildren) {
-
-const [session, setSession] = useState<Session>(DefaultSession);
+const [session, dispatch] = useReducer(reducer, DefaultSession);
   
   // ref를 만든다
   const loginHandlerRef = useRef<LoginHandler>(null);
 
-  // plusCount(100)을 하면 그냥 100으로 설정이 된다.
-  // 왜 함수를 쓰냐? Batch 처리 떄문에, 17ms동안은 버튼을 4번 눌러도 count의 값이 1이 되기 때문이다.
-  // void를 리턴한다. 따라서 이걸 쓰는 곳에서는 return type을 void로 설정해야 한다.
-  // const plusCount = () => setCount((prevCount) => prevCount + 1);
-
   const logout = () => {
-    // session.loginUser = null; fail!!
-    setSession({ ...session, loginUser: null });
+    dispatch({type: 'LOGOUT', payload: null});
   };
 
   const login: LoginFunction = (name, age) => {
-    // 기존 세션은 내비둬야 한다!
-    // if (!name || !age || 0) return alert('Input Name and Age, plz!');
     if (loginHandlerRef.current?.validate())
-    setSession({ ...session, loginUser: { id: 1, name, age } });
+        dispatch({type: 'LOGIN', payload: {id: 1, name, age}});
+
   };
 
   const removeItem = (id: number) => {
     if(!confirm('Are u sure?')) return; // 뒤에 리턴문에 가는 것을 무겁게 하면 안좋다.
-    // setSession({...session, cart: [...session.cart.filter(item => item.id !== id)]})
-
-    // 카트의 주소만 바꾼 것이다. 
-    setSession({...session, cart: session.cart.filter(item => item.id !== id)})
+    dispatch({type: 'REMOVE-ITEM', payload: id})
   }
 
 // id가 있다면 수정, 없다면 만들기
@@ -88,31 +96,16 @@ const saveItem = ({ id, name, price }: ItemType) => {
   const item = id && session.cart.find((item) => item.id === id);
 
   if (item) {
-    // item을 찾음 -> 수정!
-    // item.name = name;
-    // item.price = price;
-    setSession({
-      ...session,
-      cart: session.cart.map(item =>
-        item.id === id ? { id, name, price } : item
-      )
-    });
+    dispatch({type: 'EDIT-ITEM', payload: {id, name, price}})
   } else {
-    // max는 반드시 iterator로 펼쳐서 받아야 한다. 
-    // ...와 같은 spread 연산자를 사용하면 id: Math.max([100, 200, 300]) 안에 배열이 펼쳐져서 나온다. 
+
     const newItem = {
       id: Math.max(...session.cart.map(item => item.id), 0) + 1,
       name,
       price
     };
-    // cart의 주소도 안바뀐다 -> push만 하면 주소가 안바뀐다! 
-    // -> 즉, 이것을 참조하는 곳은 이 것이 바뀐지 모른다. 
-    // session.cart.push(newItem); // ❌ 하지 않음
-    
-    // 이 두 줄을 써도 되냐? cart의 주소는 바뀌지 않는다. 
-    // session.cart.push(newItem);
-    // setSession({ ... session }) 
-    setSession({ ...session, cart: [...session.cart, newItem] });
+    dispatch({type: 'EDIT-ITEM', payload: newItem});
+    // setSession({ ...session, cart: [...session.cart, newItem] });
   }
 
 
@@ -124,4 +117,3 @@ const saveItem = ({ id, name, price }: ItemType) => {
 }
 
 export const useSession = () => use(SessionContext);
-v
