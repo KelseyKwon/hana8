@@ -2,7 +2,7 @@
 import { PlusIcon } from 'lucide-react';
 import {
   useEffect,
-  useLayoutEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -13,6 +13,7 @@ import Item from './Item';
 import Login from '../Login';
 import Profile, { type ProfileHandler } from '../Profile';
 import Button from './ui/Button';
+import { useFetch } from '../hooks/useFetch';
 
 
 // type UR<T> = {current: T | null}
@@ -38,6 +39,7 @@ export default function My() {
     */
 
   const profileHandlerRef = useRef<ProfileHandler>(null);
+  const item101 = session.cart.find((item) => item.id === 101);
 
   // strict mode vs 그냥 mode 
   const [badSec, setBadSec] = useState(0);
@@ -59,44 +61,56 @@ export default function My() {
   // useInterval(ff, 1000, goodSec + 1);
 
 
-  const [data, setData] = useState<ItemType[]>([]);
-  useLayoutEffect(() => {
-    const controller = new AbortController()
-    const {signal} = controller;
-    fetch('/data/sample/json', {signal})
-    .then(res => res.json())
-    .then(setData)
+  // const [data, setData] = useState<ItemType[]>([]);
+  // useLayoutEffect(() => {
+  //   const controller = new AbortController()
+  //   const {signal} = controller;
+  //   fetch('/data/sample/json', {signal})
+  //   .then(res => res.json())
+  //   .then(setData)
 
-    return () => controller.abort();
-  }, []);
+  //   return () => controller.abort();
+  // }, []);
+
+  const { data } = useFetch<ItemType[]>('/data/sample.json');
+
+  const totalPrice = useMemo(
+    () => session.cart.reduce((acc, item) => acc + item.price, 0),
+    [session.cart]
+  );
 
   // 해서 데이터를 받기!
   // useFetch()
-return (
-  <>
-  <h1 className='text-xl'>bad: {badSec}, good: {goodSec}</h1>
-  <div className='flex'>
-    <button onClick={reset}>reset</button>
-    <button onClick={clear}>clear</button>
-  </div>
+
+
+  return (
+    <>
+      <h1 className='text-xl'>
+        bad: {badSec}, good: {goodSec}
+      </h1>
+      <div className='flex'>
+        <button onClick={reset}>reset</button>
+        <button onClick={clear}>clear</button>
+            </div>
       {session?.loginUser ? <Profile ref={profileHandlerRef} /> : <Login />}
       <hr />
-      <a href='#!' onClick={(e) => {
-        e.preventDefault();
-        profileHandlerRef.current?.showLoginUser();
-        profileHandlerRef.current?.logout();
-      }}>{}</a>
+      <a
+        href='#!'
+        onClick={(e) => {
+          e.preventDefault();
+          profileHandlerRef.current?.showLoginUser();
+        }}
+      >
+        {item101?.name}
+      </a>
+      <h2 className='text-xl'>Tot: {totalPrice.toLocaleString()}원</h2>
       <ul>
-        {/* destructuring! */}
-
-        {data.map((item) => (
+        {(session.cart.length ? session.cart : data)?.map((item) => (
           <li key={item.id}>
-            <Item item={item}  />
+            <Item item={item} />
           </li>
         ))}
         <li className='text-center'>
-          {/* 만약에 Item을 객체로 전달하고 싶으면은, {{}} 처럼 이중괄호 -> javascript & 객체 의미 */}
-
           {isAdding ? (
             <Item
               item={{ id: 0, name: 'New Item', price: 3000 }}

@@ -1,8 +1,9 @@
-import { useEffect, type PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 import { useCounter } from '../hooks/CounterContext';
 import { useSession } from '../hooks/SessionContext';
 import Button from './ui/Button';
-import { useToggle } from '../hooks/toggle';
+import { useToggle } from '../hooks/useToggle';
+import { useFetch } from '../hooks/useFetch';
 
 // type Prop = { name: string; children: ReactNode };
 // children을 포함하고 있는 utility type이 있다. 아래 코드는 위와 같다.
@@ -11,7 +12,7 @@ import { useToggle } from '../hooks/toggle';
 
 // prop이 객체와 동시에 Hello가 관리하는 상태가 된다. name -> state! readonly가 됨.
 export default function Hello({children} : PropsWithChildren) {
-  const {plusCount, minusCount} = useCounter();
+  const {count, plusCount } = useCounter();
 
   // use로 시작했기 때문에 -> toggle을 하는 커스텀 훅!
   // const [toggler, toggle] = useReducer((p) => !p, false)
@@ -21,21 +22,24 @@ export default function Hello({children} : PropsWithChildren) {
   // null이면 destructuring이 안됨 -> 최소한 빈 배열은 줘야 한다!
   const {name = 'Guest', age} = loginUser || {};
 
-  useEffect(() => {
-    plusCount();
-    console.log("🚀 ~ Hello ~ plusCount:", plusCount)
-    return () => {
-      return minusCount();
-      console.log("🚀 ~ Hello ~ minusCount:", minusCount)
-    };
-  }, [plusCount, minusCount, toggler])
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useFetch<{ username: string }>(
+    `https://jsonplaceholder.typicode.com/users/${count + 1}`,
+    [count]
+  );
 
 
                     
   return (
     <div className='border border-red-300 p-3 text-center'>
+      {error && <h2 className='text-red-500'>Error: {error}</h2>}
+      <h2 className='text-2xl'>
+        {count + 1}: {isLoading ? '...' : user?.username}
+      </h2>
       <input type='text' onChange={toggle} />
-                    
       <h2 className='text-2xl'>
         {/* age가 있을 때만 뒤에 small을 불러줘라! */}
         Hello, {name} {age && <small className='text-sm'>({age})</small>}

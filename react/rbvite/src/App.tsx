@@ -17,7 +17,7 @@ function App() {
       <My />
         {/* hello의 children이 된다.  */}
         반갑습니다.
-        {count < 5 && <Hello>반갑습니다</Hello>}
+        {count < 50 && <Hello>반갑습니다</Hello>}
         </SessionProvider>
     </div>
   );
