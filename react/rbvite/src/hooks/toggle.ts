@@ -1,7 +1,7 @@
 // 사용법
 // const [isAdding, toggle] = useToggle(false);
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 // defVal = different Value = 초기값을 안주면 false!
 // boolean 값을 받는다. 그리고 상태와 함수를 리턴

@@ -1,11 +1,19 @@
-import Profile, { type ProfileHandler } from '../Profile';
-import Login from '../Login';
-import Button from './ui/Button';
+/* eslint-disable react-hooks/rules-of-hooks */
 import { PlusIcon } from 'lucide-react';
-import { useEffect, useReducer, useRef, useState } from 'react';
-import Item from './Item';
-import { useSession } from '../hooks/SessionContext';
+import {
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useInterval } from '../hooks/interval';
+import { type ItemType, useSession } from '../hooks/SessionContext';
+import Item from './Item';
+import Login from '../Login';
+import Profile, { type ProfileHandler } from '../Profile';
+import Button from './ui/Button';
+
 
 // type UR<T> = {current: T | null}
 
@@ -46,11 +54,31 @@ export default function My() {
   };
   // goodSec + 1 의 값이
   console.log('🚀 ~ goodSec:', goodSec);
-  useInterval(ff, 1000, goodSec + 1);
+  const { clear, reset } = useInterval(ff, 1000, goodSec + 1);
 
+  // useInterval(ff, 1000, goodSec + 1);
+
+
+  const [data, setData] = useState<ItemType[]>([]);
+  useLayoutEffect(() => {
+    const controller = new AbortController()
+    const {signal} = controller;
+    fetch('/data/sample/json', {signal})
+    .then(res => res.json())
+    .then(setData)
+
+    return () => controller.abort();
+  }, []);
+
+  // 해서 데이터를 받기!
+  // useFetch()
 return (
   <>
   <h1 className='text-xl'>bad: {badSec}, good: {goodSec}</h1>
+  <div className='flex'>
+    <button onClick={reset}>reset</button>
+    <button onClick={clear}>clear</button>
+  </div>
       {session?.loginUser ? <Profile ref={profileHandlerRef} /> : <Login />}
       <hr />
       <a href='#!' onClick={(e) => {
@@ -61,7 +89,7 @@ return (
       <ul>
         {/* destructuring! */}
 
-        {session.cart.map((item) => (
+        {data.map((item) => (
           <li key={item.id}>
             <Item item={item}  />
           </li>
