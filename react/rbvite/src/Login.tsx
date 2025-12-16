@@ -49,8 +49,11 @@ export default function Login() {
 
   // dom이 paint 될 떄 그려진다.  => 바로 첫 페이지에서 포커스가 됨!
   useEffect(() => {
+    alert('Login plz...')
     if(nameRef.current)
     nameRef.current.focus();
+
+      return () => alert('로그인이 되셨어요'); // unmount -> 함수를 가지고 있다가, unmount가 될 때, 이 함수를 호출하게 된다. 따라서 무조건 function object가 되어야 한다!
   }, [])
 
   return (

@@ -2,9 +2,10 @@ import Profile, { type ProfileHandler } from '../Profile';
 import Login from '../Login';
 import Button from './ui/Button';
 import { PlusIcon } from 'lucide-react';
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import Item from './Item';
 import { useSession } from '../hooks/SessionContext';
+import { useInterval } from '../hooks/interval';
 
 // type UR<T> = {current: T | null}
 
@@ -30,12 +31,19 @@ export default function My() {
 
   const profileHandlerRef = useRef<ProfileHandler>(null);
 
-  // useEffect -> dom이 그려지고 나서 호출이 된다!
+  // strict mode vs 그냥 mode 
+  const [badSec, setBadSec] = useState(0);
+  const [goodSec, setGoodSec] = useState(0);
+  // useEffect -> dom이 그려지고 나서 호출이 된다! // bad : clean x, good : clean o
   useEffect(() => {
+    setInterval(() => setBadSec(p => p + 1), 1000)
   }, [])
+  
+  useInterval(() => setGoodSec(p => p + 1), 1000);
 
 return (
-    <>
+  <>
+  <h1 className='text-2xl'>bad: {badSec}, good: {goodSec}</h1>
       {session?.loginUser ? <Profile ref={profileHandlerRef} /> : <Login />}
       <hr />
       <a href='#!' onClick={(e) => {

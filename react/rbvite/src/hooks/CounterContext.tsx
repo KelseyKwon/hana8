@@ -1,5 +1,5 @@
 // count라는 상태를 보관하는 Context
-import { createContext, use, useReducer, type PropsWithChildren } from "react";
+import { createContext, use, useCallback, useReducer, type PropsWithChildren } from "react";
 
 type ContextValue = {
     count: number;
@@ -20,8 +20,9 @@ type Action = {
 // return 은 항상 precount 타입이 된다. 
 const reducer = (preCount: number, {type, payload}: Action) => {
     switch (type) {
-        case 'plus': return preCount + payload;
-        case 'minus': return preCount - payload;
+        case 'plus': 
+        case 'minus': 
+        return preCount + payload;
         case 'multi': return preCount * payload;
         default: return preCount;
     }
@@ -32,9 +33,9 @@ export function CounterProvider ({children}: PropsWithChildren) {
     const [count, dispatch] = useReducer(reducer, 0);
     // 이렇게 계속 늘어나는 것을 useReducer로 관리한다!
 // const [count, setCount] = useState(0);
-  const plusCount = () => dispatch({type: 'plus', payload: 1});
-  const minusCount = () => dispatch({type: 'minus', payload: 1});
-  const multiCount = (payload:number) => dispatch({type: 'multi', payload});
+  const plusCount = useCallback(() => dispatch({type: 'plus', payload: 1}), []); // 뒤에가 dependency array -> 뭐가 바뀔떄마다, 새로운 어레이로 할당해달라!
+  const minusCount = useCallback(() => dispatch({type: 'minus', payload: -1}), []);
+  const multiCount = useCallback((payload:number) => dispatch({type: 'multi', payload}), []);
 
     return <CounterContext.Provider value={{count, plusCount, minusCount, multiCount}}>
         {/* children들이 consumer가 된다 -> 위에 value을 사용할 수 있다! */}
