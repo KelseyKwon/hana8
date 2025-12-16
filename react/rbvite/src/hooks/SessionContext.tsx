@@ -93,6 +93,7 @@ export function SessionProvider({children}: PropsWithChildren) {
 
 // const [session, setSession] = useState<Session>(DefaultSession);
 const [session, dispatch] = useReducer(reducer, DefaultSession);
+// ref를 만든다
 const loginHandlerRef = useRef<LoginHandler>(null);
 
 const login = (name:string, age:number) => {
@@ -111,16 +112,6 @@ const removeItem = (payload: number) =>
 const saveItem = (item: ItemType) => {
     dispatch({ type: 'saveItem', payload: item });
 }
-  
-  // ref를 만든다
-
-  // plusCount(100)을 하면 그냥 100으로 설정이 된다.
-  // 왜 함수를 쓰냐? Batch 처리 떄문에, 17ms동안은 버튼을 4번 눌러도 count의 값이 1이 되기 때문이다.
-  // void를 리턴한다. 따라서 이걸 쓰는 곳에서는 return type을 void로 설정해야 한다.
-  // const plusCount = () => setCount((prevCount) => prevCount + 1);
-
-
-
 
     return <SessionContext.Provider value={{session, login, logout, loginHandlerRef, removeItem, saveItem}}>
         {children}
