@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useDebounce, useInterval } from '../hooks/useTimer';
+import { useDebounce, useInterval, useThrottle } from '../hooks/useTimer';
 import { type ItemType, useSession } from '../hooks/SessionContext';
 import Item from './Item';
 import Login from '../Login';
@@ -85,7 +85,8 @@ export default function My() {
 
   const [searchStr, setSearchStr] = useState('');
   // 아래 str은 디바운스가 처리된 값 -> 이걸로 검색을 해야 한다!
-  const debouncedSearchStr = useDebounce(searchStr, 500);
+  // const debouncedSearchStr = useDebounce(searchStr, 500);
+  const debouncedSearchStr = useThrottle(searchStr, 500);
 
   return (
     <>

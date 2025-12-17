@@ -96,3 +96,40 @@ export function useDebounceWithoutTimeout<T>(state: T, delay: number, deps: unkn
   }, [state, ...deps])
   return debouncedValue;
 }
+
+export function useThrottle<T>(state: T, delay: number, deps: unknown[] = []) {
+  const [throttledValue, setThrottledValue] = useState<T>(state);
+  // 변수에 타이머가 있으면 씹고, undefined or null이면 새로 만든다.
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // 액션이 일어날떄마다 -> state에 변경이 일어날떄마다
+  // 밑에서 unmount가 되면, 다시 useEffect을 실행한다. 검색이 끝나면, 앞에께 무력화 되고 다시 돌아가는 것이 이것 덕분이다!
+  useEffect(() => {
+    // 타이머가 돌고 있으면 -> 씹는다
+    if(timerRef.current) return;
+    timerRef.current = setTimeout(() => {
+      setThrottledValue(state); timerRef.current = undefined}, delay);
+
+      // unmount -> 그리고 mount가 된다. 
+      // return () => clearTimeout(timerRef.current); clear을 할 필요가 없다 -> 이러면 아무 일도 안일어나게 된다!
+  }, [state, ...deps])
+
+  return throttledValue;
+}
+export function useThrottleWithoutTimeHook<T>(state: T, delay: number, deps: unknown[] = []) {
+  const [throttledValue, setThrottledValue] = useState<T>(state);
+  // 변수에 타이머가 있으면 씹고, undefined or null이면 새로 만든다.
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // 액션이 일어날떄마다 -> state에 변경이 일어날떄마다
+  // 밑에서 unmount가 되면, 다시 useEffect을 실행한다. 검색이 끝나면, 앞에께 무력화 되고 다시 돌아가는 것이 이것 덕분이다!
+  useEffect(() => {
+    // 타이머가 돌고 있으면 -> 씹는다
+    if(timerRef.current) return;
+    timerRef.current = setTimeout(() => {
+      setThrottledValue(state); timerRef.current = undefined}, delay);
+
+      // unmount -> 그리고 mount가 된다. 
+      // return () => clearTimeout(timerRef.current); clear을 할 필요가 없다 -> 이러면 아무 일도 안일어나게 된다!
+  }, [state, ...deps])
+
+  return throttledValue;
+}
