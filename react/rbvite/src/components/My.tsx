@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { PlusIcon } from 'lucide-react';
 import {
+  useDeferredValue,
   useEffect,
   useMemo,
   useReducer,
@@ -16,17 +17,15 @@ import Button from './ui/Button';
 import { useFetch } from '../hooks/useFetch';
 import LabelInput from './ui/LabelInput';
 
-
 // type UR<T> = {current: T | null}
 
-
 export default function My() {
-  const {session } = useSession();
+  const { session } = useSession();
   // const [isAdding, setAdding]= useState(false);
   // const toggleAdding = () => setAdding((pre) => !pre);
 
   // first argument : Dispatch 함수
-  const [isAdding, toggleAdding] = useReducer(pre => !pre, false); //여기에서는 action이 필요가 없다. 
+  const [isAdding, toggleAdding] = useReducer((pre) => !pre, false); //여기에서는 action이 필요가 없다.
   // addPrice(1000) -> 이전에 있던 total 값에 더한 것이 -> useReducer()
   /*
   function useReducer(reducer, initValueOrFunction) {
@@ -42,14 +41,14 @@ export default function My() {
   const profileHandlerRef = useRef<ProfileHandler>(null);
   const item101 = session.cart.find((item) => item.id === 101);
 
-  // strict mode vs 그냥 mode 
+  // strict mode vs 그냥 mode
   const [badSec, setBadSec] = useState(0);
   const [goodSec, setGoodSec] = useState(0);
   // useEffect -> dom이 그려지고 나서 호출이 된다! // bad : clean x, good : clean o
   useEffect(() => {
-    setInterval(() => setBadSec(p => p + 1), 1000)
-  }, [])
-  
+    setInterval(() => setBadSec((p) => p + 1), 1000);
+  }, []);
+
   const ff = (n: number) => {
     console.log('🚀 ~ n:', n, goodSec); // n은 영원히 1 (: )
     // setGoodSec(n + 1); // 위 goodSec는 영원히 0
@@ -60,7 +59,6 @@ export default function My() {
   const { clear, reset } = useInterval(ff, 1000, goodSec + 1);
 
   // useInterval(ff, 1000, goodSec + 1);
-
 
   // const [data, setData] = useState<ItemType[]>([]);
   // useLayoutEffect(() => {
@@ -88,6 +86,9 @@ export default function My() {
   // const debouncedSearchStr = useDebounce(searchStr, 500);
   const debouncedSearchStr = useThrottle(searchStr, 500);
 
+  // useState가 실제 상태. 실제 상태가 바뀐다는 것은 렌더링이 끝난다는 것! -> 끝난 다음에, useDeferredValue을 불러준다!
+  const deferredStr = useDeferredValue(searchStr);
+
   return (
     <>
       <h1 className='text-xl'>
@@ -96,7 +97,7 @@ export default function My() {
       <div className='flex'>
         <button onClick={reset}>reset</button>
         <button onClick={clear}>clear</button>
-            </div>
+      </div>
       {session?.loginUser ? <Profile ref={profileHandlerRef} /> : <Login />}
       <hr />
       <a
@@ -109,18 +110,23 @@ export default function My() {
         {item101?.name}
       </a>
       <h2 className='text-xl'>Tot: {totalPrice.toLocaleString()}원</h2>
+      <h2 className='text-xl text-red-800'>
+        {searchStr} : {deferredStr} : {debouncedSearchStr}
+      </h2>
       {/* input값이 바뀔때마다 아래에 검색 값이 나오도록 설정 */}
-      <LabelInput 
-      label='search' 
-      onChange={e=> setSearchStr(e.target.value)}
-      autoComplete = 'off'
+      <LabelInput
+        label='search'
+        onChange={(e) => setSearchStr(e.target.value)}
+        autoComplete='off'
       />
       <ul>
-        {(session.cart.length ? session.cart : data)?.filter(item => item.name.includes(debouncedSearchStr)).map((item) => (
-          <li key={item.id}>
-            <Item item={item} />
-          </li>
-        ))}
+        {(session.cart.length ? session.cart : data)
+          ?.filter((item) => item.name.includes(debouncedSearchStr))
+          .map((item) => (
+            <li key={item.id}>
+              <Item item={item} />
+            </li>
+          ))}
         <li className='text-center'>
           {isAdding ? (
             <Item
