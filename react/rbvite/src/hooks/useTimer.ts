@@ -73,11 +73,18 @@ export function useTimeout<T extends () => void>(
     return useTime(setTimeout, cb, delay, ...args);
 }
 
-// 검색 기능에 decounce 기능 추가!
-// search Str을 천천히 디바운스를 거는 함수 -> 이 searchStr이 바뀔때마다 천천히 dv값을 주겠다! 그럼 searchStr을 언제 주느냐? 정해진 delay마다!
-// const debounce value = useDebounce(searchStr, delay) => filter
-// data.filter(dv)
 export function useDebounce<T>(state: T, delay: number, deps: unknown[] = []) {
+  const [debouncedValue, setDebouncedValue] = useState<T>(state);
+  // 아래 reset은 상태가 바뀔때마다 reset을 해주면 된다!
+  const {reset} = useTimeout(() => setDebouncedValue(state), delay);
+  useEffect(() => {
+    reset(); // clear, setTimeout을 해주는 용도
+    // 상태가 바뀌면 항상 unmount부터 일어나고 -> 그 다음에 mount가 된다. 
+  }, [state, ...deps])
+  return debouncedValue;
+}
+
+export function useDebounceWithoutTimeout<T>(state: T, delay: number, deps: unknown[] = []) {
   const [debouncedValue, setDebouncedValue] = useState<T>(state);
   useEffect(() => {
     // 언제마다 debounce? dependency array가 바뀔때마다! searchStr이 바뀔때마다 debounce을 체크해야 한다!
