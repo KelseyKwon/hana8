@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/rules-of-hooks */
  // useInterval(() => setgoodSec(p => p + 1), 1000))
  // My 속의 useEffect 부분에 기능들을 일로 옮겨왔다!
 
-import { useEffect, useRef} from "react";
+import { useEffect, useRef, useState} from "react";
 
 
 // useInterval(console.log, 1000, x, y, z);
@@ -28,7 +29,7 @@ export function useInterval_OLD<T extends (...args: Parameters<T>) => void>(
 
 // useReducer처럼 -> 두번쨰 인자에 이전 값을 담아놓는다
 // 함수의 타입을 가져오는 법 -> typeof!
-function time<T extends () => void>(
+function useTime<T extends () => void>(
     f: typeof setTimeout | typeof setInterval, 
     cb: T, 
     delay: number, 
@@ -61,7 +62,7 @@ export function useInterval<T extends (...args: Parameters<T>) => void>(
   delay: number,
   ...args: Parameters<T>
 ) {
-    return time(setInterval, cb, delay, ...args);
+    return useTime(setInterval, cb, delay, ...args);
 }
 
 export function useTimeout<T extends () => void>(
@@ -69,5 +70,22 @@ export function useTimeout<T extends () => void>(
   delay: number,
   ...args: Parameters<T>
 ) {
-    return time(setTimeout, cb, delay, ...args);
+    return useTime(setTimeout, cb, delay, ...args);
+}
+
+// 검색 기능에 decounce 기능 추가!
+// search Str을 천천히 디바운스를 거는 함수 -> 이 searchStr이 바뀔때마다 천천히 dv값을 주겠다! 그럼 searchStr을 언제 주느냐? 정해진 delay마다!
+// const debounce value = useDebounce(searchStr, delay) => filter
+// data.filter(dv)
+export function useDebounce<T>(state: T, delay: number, deps: unknown[] = []) {
+  const [debouncedValue, setDebouncedValue] = useState<T>(state);
+  useEffect(() => {
+    // 언제마다 debounce? dependency array가 바뀔때마다! searchStr이 바뀔때마다 debounce을 체크해야 한다!
+    // 바뀐 값을 디레이마다 제공해준다. 
+    const timer = setTimeout(() => setDebouncedValue(state), delay)
+
+    // 반드시 cleanup을 해줘야 함!
+    return () => clearTimeout(timer);
+  }, [state, ...deps])
+  return debouncedValue;
 }

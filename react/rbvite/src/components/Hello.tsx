@@ -16,7 +16,7 @@ export default function Hello({children} : PropsWithChildren) {
 
   // use로 시작했기 때문에 -> toggle을 하는 커스텀 훅!
   // const [toggler, toggle] = useReducer((p) => !p, false)
-  const [toggler, toggle] = useToggle();
+  const [, toggle] = useToggle();
   const {session: {loginUser}, } = useSession();
 
   // null이면 destructuring이 안됨 -> 최소한 빈 배열은 줘야 한다!

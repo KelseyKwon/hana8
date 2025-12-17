@@ -7,13 +7,14 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useInterval } from '../hooks/interval';
+import { useDebounce, useInterval } from '../hooks/useTimer';
 import { type ItemType, useSession } from '../hooks/SessionContext';
 import Item from './Item';
 import Login from '../Login';
 import Profile, { type ProfileHandler } from '../Profile';
 import Button from './ui/Button';
 import { useFetch } from '../hooks/useFetch';
+import LabelInput from './ui/LabelInput';
 
 
 // type UR<T> = {current: T | null}
@@ -82,6 +83,9 @@ export default function My() {
   // 해서 데이터를 받기!
   // useFetch()
 
+  const [searchStr, setSearchStr] = useState('');
+  // 아래 str은 디바운스가 처리된 값 -> 이걸로 검색을 해야 한다!
+  const debouncedSearchStr = useDebounce(searchStr, 500);
 
   return (
     <>
@@ -104,8 +108,14 @@ export default function My() {
         {item101?.name}
       </a>
       <h2 className='text-xl'>Tot: {totalPrice.toLocaleString()}원</h2>
+      {/* input값이 바뀔때마다 아래에 검색 값이 나오도록 설정 */}
+      <LabelInput 
+      label='search' 
+      onChange={e=> setSearchStr(e.target.value)}
+      autoComplete = 'off'
+      />
       <ul>
-        {(session.cart.length ? session.cart : data)?.map((item) => (
+        {(session.cart.length ? session.cart : data)?.filter(item => item.name.includes(debouncedSearchStr)).map((item) => (
           <li key={item.id}>
             <Item item={item} />
           </li>
