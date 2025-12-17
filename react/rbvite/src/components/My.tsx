@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { PlusIcon } from 'lucide-react';
+import { Loader2Icon, PlusIcon } from 'lucide-react';
 import {
   useDeferredValue,
   useEffect,
@@ -7,6 +7,7 @@ import {
   useReducer,
   useRef,
   useState,
+  useTransition,
 } from 'react';
 import { useInterval, useThrottle } from '../hooks/useTimer';
 import { type ItemType, useSession } from '../hooks/SessionContext';
@@ -89,6 +90,27 @@ export default function My() {
   // useState가 실제 상태. 실제 상태가 바뀐다는 것은 렌더링이 끝난다는 것! -> 끝난 다음에, useDeferredValue을 불러준다!
   const deferredStr = useDeferredValue(searchStr);
 
+  // const [isPending, startTransition] = useTransition();
+  const [isSearching, startSearchTransition] = useTransition();
+
+  // e = onChangeEvent! => 즉, 상태르 바꾸는 것을 2초 이따가 바꾸기! (검색 위에 나타나는 것이 오래 걸린다)
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    /**
+     * 만약에 startSearchTransition을 안 쓰면, setSearching(true) -> 하고 난 다음에 setSearching(false)로 만들어야 한다!
+     * 즉, 비동기에 대한 처리르 할 떄, 함수 자체가 비동기를 가질 필요가 없고, (onChange의 이벤트 리스너가 비동기가 되는 것은 좋지 않다 -> 브라우저가 알기 힘들기 떄문!)
+     * 하지만 startSearchTransition을 쓰면 astnc을 여기에 쓸 수 있기 때문에 k!
+     */
+
+    // 이렇게 하면, handler가 async을 가질 필요가 없다! -> 왜냐면 아래 함수에서 async을 사용하면 되므로
+    startSearchTransition(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // 상태가 바뀌고 나면, setSearchStr 실행
+      setSearchStr(e.target.value);
+    });
+    // 2초 동안에 달레이 만들기
+    // 검색을 지연시키고 싶다.
+  };
+
   return (
     <>
       <h1 className='text-xl'>
@@ -110,15 +132,15 @@ export default function My() {
         {item101?.name}
       </a>
       <h2 className='text-xl'>Tot: {totalPrice.toLocaleString()}원</h2>
-      <h2 className='text-xl text-red-800'>
-        {searchStr} : {deferredStr} : {debouncedSearchStr}
-      </h2>
+      {isSearching ? (
+        <Loader2Icon className='animate-spin' />
+      ) : (
+        <h2 className='text-xl text-red-800'>
+          {searchStr} : {deferredStr} : {debouncedSearchStr}
+        </h2>
+      )}
       {/* input값이 바뀔때마다 아래에 검색 값이 나오도록 설정 */}
-      <LabelInput
-        label='search'
-        onChange={(e) => setSearchStr(e.target.value)}
-        autoComplete='off'
-      />
+      <LabelInput label='search' onChange={handleSearch} autoComplete='off' />
       <ul>
         {(session.cart.length ? session.cart : data)
           ?.filter((item) => item.name.includes(debouncedSearchStr))
