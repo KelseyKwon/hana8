@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useDebounce, useInterval, useThrottle } from '../hooks/useTimer';
+import { useInterval, useThrottle } from '../hooks/useTimer';
 import { type ItemType, useSession } from '../hooks/SessionContext';
 import Item from './Item';
 import Login from '../Login';

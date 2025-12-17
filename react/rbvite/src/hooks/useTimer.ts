@@ -29,7 +29,7 @@ export function useInterval_OLD<T extends (...args: Parameters<T>) => void>(
 
 // useReducer처럼 -> 두번쨰 인자에 이전 값을 담아놓는다
 // 함수의 타입을 가져오는 법 -> typeof!
-function useTime<T extends () => void>(
+function useTime<T extends (...args: Parameters<T>) => void>(
     f: typeof setTimeout | typeof setInterval, 
     cb: T, 
     delay: number, 
@@ -39,22 +39,25 @@ function useTime<T extends () => void>(
 const timerRef = useRef<ReturnType<typeof f>>(undefined);
 
 const setTime = () => {
-    timerRef.current = f(cb, delay, ...args);
+    timerRef.current = f(() => {
+      cb(...args);
+    timerRef.current = undefined;
+    }, delay);
 };
     // const clear = () => f === setTimeout? clearTimeout(timerRef.current)
     //  : clearInterval(timerRef.current);
-     const clear = () => (f === setTimeout? clearTimeout
-     : clearInterval)(timerRef.current);
+     const clear = () => {
+      if(timerRef.current) return;
+      (f === setTimeout? clearTimeout : clearInterval)(timerRef.current); timerRef.current = undefined; }
     const reset = () => {
         clear();
         setTime();
     }
   useEffect(() => {
     setTime();
-
     return clear;
   }, []);
-  return {clear, reset};
+  return {clear, reset, timerRef };
 };
 
 export function useInterval<T extends (...args: Parameters<T>) => void>(
@@ -65,7 +68,7 @@ export function useInterval<T extends (...args: Parameters<T>) => void>(
     return useTime(setInterval, cb, delay, ...args);
 }
 
-export function useTimeout<T extends () => void>(
+export function useTimeout<T extends (...args: Parameters<T>) => void>(
   cb: T,
   delay: number,
   ...args: Parameters<T>
@@ -99,22 +102,17 @@ export function useDebounceWithoutTimeout<T>(state: T, delay: number, deps: unkn
 
 export function useThrottle<T>(state: T, delay: number, deps: unknown[] = []) {
   const [throttledValue, setThrottledValue] = useState<T>(state);
-  // 변수에 타이머가 있으면 씹고, undefined or null이면 새로 만든다.
-  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-  // 액션이 일어날떄마다 -> state에 변경이 일어날떄마다
-  // 밑에서 unmount가 되면, 다시 useEffect을 실행한다. 검색이 끝나면, 앞에께 무력화 되고 다시 돌아가는 것이 이것 덕분이다!
-  useEffect(() => {
-    // 타이머가 돌고 있으면 -> 씹는다
-    if(timerRef.current) return;
-    timerRef.current = setTimeout(() => {
-      setThrottledValue(state); timerRef.current = undefined}, delay);
+  const {timerRef, reset} = useTimeout(setThrottledValue, delay, state);
 
-      // unmount -> 그리고 mount가 된다. 
-      // return () => clearTimeout(timerRef.current); clear을 할 필요가 없다 -> 이러면 아무 일도 안일어나게 된다!
+  useEffect(() => {
+    if(timerRef.current) return;
+    reset();
+
   }, [state, ...deps])
 
   return throttledValue;
 }
+
 export function useThrottleWithoutTimeHook<T>(state: T, delay: number, deps: unknown[] = []) {
   const [throttledValue, setThrottledValue] = useState<T>(state);
   // 변수에 타이머가 있으면 씹고, undefined or null이면 새로 만든다.
