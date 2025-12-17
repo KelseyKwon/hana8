@@ -10,12 +10,11 @@ import {
   useTransition,
 } from 'react';
 import { useInterval, useThrottle } from '../hooks/useTimer';
-import { type ItemType, useSession } from '../hooks/SessionContext';
+import { useSession } from '../hooks/SessionContext';
 import Item from './Item';
 import Login from '../Login';
 import Profile, { type ProfileHandler } from '../Profile';
 import Button from './ui/Button';
-import { useFetch } from '../hooks/useFetch';
 import LabelInput from './ui/LabelInput';
 
 // type UR<T> = {current: T | null}
@@ -50,14 +49,15 @@ export default function My() {
     setInterval(() => setBadSec((p) => p + 1), 1000);
   }, []);
 
-  const ff = (n: number) => {
-    console.log('🚀 ~ n:', n, goodSec); // n은 영원히 1 (: )
+  // const ff = (n: number) => {
+  const ff = () => {
+    // console.log('🚀 ~ n:', n, goodSec); // n은 영원히 1 (: )
     // setGoodSec(n + 1); // 위 goodSec는 영원히 0
     setGoodSec((p) => p + 1);
   };
   // goodSec + 1 의 값이
-  console.log('🚀 ~ goodSec:', goodSec);
-  const { clear, reset } = useInterval(ff, 1000, goodSec + 1);
+  // console.log('🚀 ~ goodSec:', goodSec);
+  const { clear, reset } = useInterval(ff, 1000);
 
   // useInterval(ff, 1000, goodSec + 1);
 
@@ -72,7 +72,7 @@ export default function My() {
   //   return () => controller.abort();
   // }, []);
 
-  const { data } = useFetch<ItemType[]>('/data/sample.json');
+  // const { data } = useFetch<ItemType[]>('/data/sample.json');
 
   const totalPrice = useMemo(
     () => session.cart.reduce((acc, item) => acc + item.price, 0),
@@ -142,7 +142,8 @@ export default function My() {
       {/* input값이 바뀔때마다 아래에 검색 값이 나오도록 설정 */}
       <LabelInput label='search' onChange={handleSearch} autoComplete='off' />
       <ul>
-        {(session.cart.length ? session.cart : data)
+        {/* {(session.cart.length ? session.cart : data) */}
+        {session.cart
           ?.filter((item) => item.name.includes(debouncedSearchStr))
           .map((item) => (
             <li key={item.id}>

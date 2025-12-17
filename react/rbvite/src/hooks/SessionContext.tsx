@@ -1,12 +1,14 @@
 import {
   createContext,
   use,
+  useEffect,
   useReducer,
   useRef,
   type PropsWithChildren,
   type RefObject,
 } from 'react';
 import type { LoginHandler } from '../Login';
+import { useFetch } from './useFetch';
 
 export type ItemType = {
   id: number;
@@ -23,15 +25,28 @@ export type Session = {
 };
 export type LoginFunction = (name: string, age: number) => void; // 이 타입을 계속 쓰겠다!
 
-const DefaultSession: Session = {
-  // loginUser: null,
-  loginUser: { id: 1, name: 'Hong', age: 33 },
+// SetStorage KEY -> 0.1 버전에 해당하는 데이터. 이 버전을 왜 남겨두었냐? 데이터의 포맷이 바뀌거나, 추가되면 -> 스토리지 버전을 바꿔치기 해야 된다!
+// const SKEY = `CART_${process.env.VERSION}`;
+const SKEY = 'CART_v1';
+const SKEY_EXP = 'CART_EXP';
+const SKEY_EXP_TIME = 86400 * 1000; // 원래는 이렇게 함.
+// const SKEY_EXP_TIME = 30 * 1000; // QQQ -> 반드시 없애야 하는것.
 
-  cart: [
-    { id: 100, name: '라면112', price: 3000 },
-    { id: 101, name: '컵라면1223', price: 2000 },
-    { id: 200, name: '파234', price: 5000 },
-  ],
+const setStorage = (cart: ItemType[]) => {
+  localStorage.setItem(SKEY, JSON.stringify(cart));
+  // 쓸 떄마다 expired 시간을 갱신해야 한다.
+  localStorage.setItem(SKEY_EXP, String(Date.now() + SKEY_EXP_TIME));
+};
+const getStorage = () => {
+  // exptime = expired -> clear하고 끝낸다!
+  const expiredAt = Number(localStorage.getItem(SKEY_EXP)); // 처음에는 NaN이 된다.
+  if (isNaN(expiredAt) || expiredAt < Date.now()) {
+    // storage의 과거 버전만 날려버리는 법 :
+    // localStorage.removeItem(SKEY); 살릴게 있으면 -> clear 한 다음에 setItem을 하면 된다.
+    localStorage.clear();
+    return [];
+  }
+  return JSON.parse(localStorage.getItem(SKEY) || '[]') as ItemType[];
 };
 
 type SessionContextValue = {
@@ -44,7 +59,7 @@ type SessionContextValue = {
 };
 
 const SessionContext = createContext<SessionContextValue>({
-  session: DefaultSession,
+  session: { loginUser: null, cart: [] },
   login: () => {},
   logout: () => {},
   loginHandlerRef: null,
@@ -53,6 +68,7 @@ const SessionContext = createContext<SessionContextValue>({
 });
 
 type Action =
+  | { type: 'INITIALIZE'; payload: ItemType[] }
   | { type: 'LOGIN'; payload: LoginUser }
   // 여기서 payload의 타입을 정의를 안해주면 optional이 된다. -> 이거는 안 좋음!
   | { type: 'LOGOUT'; payload: null }
@@ -62,32 +78,53 @@ type Action =
   | { type: 'REMOVE-ITEM'; payload: number };
 
 const reducer = (session: Session, { type, payload }: Action) => {
+  // edit, add할 떄 cart에 정보를 저장해야 하므로->변수로 뺴서 관리!
+  let cart = [];
   switch (type) {
     case 'LOGIN':
     case 'LOGOUT':
       return { ...session, loginUser: payload };
     case 'ADD-ITEM':
-      return { ...session, cart: [...session.cart, payload] };
+      // 아래 cart을 스토리지에 써줘야 한다!
+      // return { ...session, cart: [...session.cart, payload] };
+      cart = [...session.cart, payload];
+      break;
     case 'EDIT-ITEM':
-      return {
-        ...session,
-        cart: session.cart.map((item) =>
-          item.id === payload.id ? payload : item
-        ),
-      };
+      cart = session.cart.map((item) =>
+        item.id === payload.id ? payload : item
+      );
+      break;
     case 'REMOVE-ITEM':
-      return {
-        ...session,
-        cart: session.cart.filter((item) => item.id !== payload),
-      };
+      cart = session.cart.filter((item) => item.id !== payload);
+      break;
+    case 'INITIALIZE':
+      cart = payload;
+      break;
     default:
       return session;
   }
+  setStorage(cart);
+  return { ...session, cart };
 };
 
 // value
 export function SessionProvider({ children }: PropsWithChildren) {
-  const [session, dispatch] = useReducer(reducer, DefaultSession);
+  const [session, dispatch] = useReducer(reducer, {
+    loginUser: { id: 1, name: 'Hong', age: 33 },
+    // getStorage가 동기이기 때문에 가능하다!
+    cart: getStorage(),
+  });
+
+  // useFetch 자체가 비동기이기 때문에 -> data가 나중에 가져와진다. => 초기값 undefined로 설정된다.
+  const { data: sampleData } = useFetch<ItemType[]>('/data/sample.json');
+  // console.log("🚀 ~ SessionProvider ~ data:", data)
+  // 따라서 바로 실행되게 하려면 -> useEffect을 쓰면 됨!
+  useEffect(() => {
+    if (sampleData && !session.cart.length) {
+      // dispatch을 통해서 세션을 관리해야 함.
+      dispatch({ type: 'INITIALIZE', payload: sampleData });
+    }
+  }, [sampleData]);
 
   // ref를 만든다
   const loginHandlerRef = useRef<LoginHandler>(null);
