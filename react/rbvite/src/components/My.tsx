@@ -17,6 +17,7 @@ import Login from '../Login';
 import Profile, { type ProfileHandler } from '../Profile';
 import Button from './ui/Button';
 import LabelInput from './ui/LabelInput';
+import Posts from './Posts';
 
 // type UR<T> = {current: T | null}
 
@@ -144,6 +145,7 @@ export default function My() {
       >
         {item101?.name}
       </a>
+      <Posts />
       <h2 className='text-xl'>Tot: {totalPrice.toLocaleString()}원</h2>
       <div>
         {isPending ? (
