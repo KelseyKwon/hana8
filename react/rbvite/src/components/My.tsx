@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { Loader2Icon, PlusIcon } from 'lucide-react';
 import {
+  useActionState,
   useDeferredValue,
   useEffect,
   useMemo,
@@ -10,7 +11,7 @@ import {
   useTransition,
 } from 'react';
 import { useInterval, useThrottle } from '../hooks/useTimer';
-import { useSession } from '../hooks/SessionContext';
+import { useSession, type ItemType } from '../hooks/SessionContext';
 import Item from './Item';
 import Login from '../Login';
 import Profile, { type ProfileHandler } from '../Profile';
@@ -91,6 +92,7 @@ export default function My() {
   const deferredStr = useDeferredValue(searchStr);
 
   // const [isPending, startTransition] = useTransition();
+  const [searchResult, setSearchResult] = useState<ItemType[]>([]);
   const [isSearching, startSearchTransition] = useTransition();
 
   // e = onChangeEvent! => 즉, 상태르 바꾸는 것을 2초 이따가 바꾸기! (검색 위에 나타나는 것이 오래 걸린다)
@@ -103,13 +105,24 @@ export default function My() {
 
     // 이렇게 하면, handler가 async을 가질 필요가 없다! -> 왜냐면 아래 함수에서 async을 사용하면 되므로
     startSearchTransition(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const str = e.target.value;
       // 상태가 바뀌고 나면, setSearchStr 실행
       setSearchStr(e.target.value);
+      setSearchResult(session.cart.filter((item) => item.name.includes(str)));
     });
     // 2초 동안에 달레이 만들기
     // 검색을 지연시키고 싶다.
   };
+
+  const [results, search, isPending] = useActionState(
+    async (prev: ItemType[], formData: FormData) => {
+      const str = String(formData.get('ActionState') ?? '');
+      await new Promise((r) => setTimeout(r, 1500));
+      return session.cart.filter((item) => item.name.includes(str));
+    },
+    [] as ItemType[]
+  );
 
   return (
     <>
@@ -132,6 +145,16 @@ export default function My() {
         {item101?.name}
       </a>
       <h2 className='text-xl'>Tot: {totalPrice.toLocaleString()}원</h2>
+      <div>
+        {isPending ? (
+          <Loader2Icon className='animate-spin' />
+        ) : (
+          'SR_ActionState'
+        )}
+        :{results.map((item) => item.name).join()}
+      </div>
+      <div>SR_Transition: {searchResult.map((item) => item.name).join()}</div>
+
       {isSearching ? (
         <Loader2Icon className='animate-spin' />
       ) : (
@@ -140,7 +163,14 @@ export default function My() {
         </h2>
       )}
       {/* input값이 바뀔때마다 아래에 검색 값이 나오도록 설정 */}
-      <LabelInput label='search' onChange={handleSearch} autoComplete='off' />
+      <form action={search}>
+        <LabelInput label='ActionState' autoComplete='off' />
+      </form>
+      <LabelInput
+        label='Transition'
+        onChange={handleSearch}
+        autoComplete='off'
+      />
       <ul>
         {/* {(session.cart.length ? session.cart : data) */}
         {session.cart
