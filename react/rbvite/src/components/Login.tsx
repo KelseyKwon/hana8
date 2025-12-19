@@ -4,9 +4,9 @@ import React, {
   useRef,
   type FormEvent,
 } from 'react';
-import Btn from './components/ui/Btn';
-import LabelInput from './components/ui/LabelInput';
-import { useSession } from './hooks/SessionContext';
+import Btn from './ui/Btn';
+import LabelInput from './ui/LabelInput';
+import { useSession } from '../hooks/SessionContext';
 
 export type LoginHandler = {
   validate: () => void;

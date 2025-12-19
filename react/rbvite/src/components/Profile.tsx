@@ -1,11 +1,13 @@
 import { useImperativeHandle, type RefObject } from 'react';
-import Btn from './components/ui/Btn';
-import { useSession } from './hooks/SessionContext';
+import Btn from './ui/Btn';
+import { useSession } from '../hooks/SessionContext';
 
 type Prop = {
   ref: RefObject<ProfileHandler | null>;
 };
+
 export type ProfileHandler = {
+  xxx: string;
   showLoginUser: () => void;
   logout: () => void;
 };
@@ -14,14 +16,18 @@ export default function Profile({ ref }: Prop) {
     session: { loginUser },
     logout,
   } = useSession();
+
   const showLoginUser = () => {
     alert(loginUser?.name);
   };
 
-  const profileHandler: ProfileHandler = { showLoginUser, logout };
+  const xxx = 'sdfdsfdfsfs';
 
-  // handle을 바깥쪽에 전달 => ref는 profileHandler의 타입이여야 한다.
-  useImperativeHandle(ref, () => profileHandler);
+  useImperativeHandle(ref, () => ({
+    xxx,
+    showLoginUser,
+    logout,
+  }));
 
   return (
     <>

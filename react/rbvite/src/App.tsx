@@ -1,24 +1,63 @@
+import { useRef } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import Hello from './components/Hello';
+import Home from './components/Home';
+import ItemRoute from './components/ItemRoute';
+import Items from './components/Items';
 import My from './components/My';
-import { useCounter } from './hooks/CounterContext';
+import Posts from './components/Posts';
+import Profile, { type ProfileHandler } from './components/Profile';
 import { SessionProvider } from './hooks/SessionContext';
-import { cn } from './libs/utils';
+import Nav from './Nav';
+import NotFound from './NotFound';
 
 function App() {
   // const [count, setCount] = useState(0); -> 대신에 context에서 가져오면 된다! -> 냉장고에 count & pluscount을 넣은 것이다.
-  const { count } = useCounter();
+  const profileHandlerRef = useRef<ProfileHandler>(null);
 
   return (
-    <div className='grid place-items-center h-screen mx-2'>
-      <h1 className={cn('text-3xl mt-3 m-5')}>count: {count}</h1>
+    <SessionProvider>
+      <Nav />
 
-      <SessionProvider>
-        <My />
-        {/* hello의 children이 된다.  */}
-        반갑습니다.
-        {count < 50 && <Hello>반갑습니다</Hello>}
-      </SessionProvider>
-    </div>
+      <div className='grid place-items-center h-screen mx-2'>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/my' element={<My />} />
+          <Route
+            path='/profile'
+            element={<Profile ref={profileHandlerRef} />}
+          />
+          <Route path='/items' element={<Items />} />
+          <Route
+            path='/items/:id'
+            element={
+              <ItemRoute
+                item={{
+                  id: 0,
+                  name: '',
+                  price: 0,
+                  isSoldOut: undefined,
+                }}
+              />
+            }
+          />
+          <Route path='/posts' element={<Posts />} />
+          <Route path='/hello' element={<Hello />} />
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </div>
+
+      <a
+        href='#!'
+        onClick={(e) => {
+          e.preventDefault();
+          profileHandlerRef.current?.showLoginUser();
+          console.log('xxx>>', profileHandlerRef.current?.xxx);
+        }}
+      >
+        Show LoginUser
+      </a>
+    </SessionProvider>
   );
 }
 

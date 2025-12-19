@@ -7,7 +7,7 @@ import {
   type PropsWithChildren,
   type RefObject,
 } from 'react';
-import type { LoginHandler } from '../Login';
+import type { LoginHandler } from '../components/Login';
 import { useFetch } from './useFetch';
 
 export type ItemType = {

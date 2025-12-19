@@ -43,7 +43,7 @@ function useTime<T extends (...args: Parameters<T>) => void>(
   const setTime = () => {
     timerRef.current = f(() => {
       cb(...args);
-      timerRef.current = undefined;
+      if (f === setTimeout) timerRef.current = undefined;
     }, delay);
   };
   // const clear = () => f === setTimeout? clearTimeout(timerRef.current)
@@ -54,6 +54,7 @@ function useTime<T extends (...args: Parameters<T>) => void>(
     timerRef.current = undefined;
   };
   const reset = () => {
+    console.log('*********', timerRef.current);
     clear();
     setTime();
   };
