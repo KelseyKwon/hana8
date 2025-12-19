@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Hello from './components/Hello';
 import Home from './components/Home';
-import Item from './components/Item';
 import Items from './components/Items';
 import My from './components/My';
 import Posts from './components/Posts';
@@ -11,6 +10,9 @@ import { SessionProvider } from './hooks/SessionContext';
 import Nav from './Nav';
 import NotFound from './NotFound';
 import ItemLayout from './components/ItemLayout';
+import ItemDetailLayout from './components/ItemDetailLayout';
+import ItemDetail from './components/ItemDetail';
+import ItemEdit from './components/ItemEdit';
 
 function App() {
   const profileHandlerRef = useRef<ProfileHandler>(null);
@@ -29,7 +31,10 @@ function App() {
           />
           <Route path='/items' element={<ItemLayout />}>
             <Route index element={<Items />} />
-            <Route path=':id' element={<Item />} />
+            <Route path=':id' element={<ItemDetailLayout />}>
+              <Route index element={<ItemDetail />} />
+              <Route path='edit' element={<ItemEdit />} />
+            </Route>
           </Route>
           <Route path='/posts' element={<Posts />} />
           <Route path='/hello' element={<Hello />} />

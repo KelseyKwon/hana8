@@ -3,7 +3,7 @@
 // useInterval(() => setgoodSec(p => p + 1), 1000))
 // My 속의 useEffect 부분에 기능들을 일로 옮겨왔다!
 
-import { useDeferredValue, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // useInterval(console.log, 1000, x, y, z);
 export function useInterval_OLD<T extends (...args: Parameters<T>) => void>(

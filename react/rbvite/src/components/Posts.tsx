@@ -56,7 +56,7 @@ export default function Posts() {
         <Spinner />
       ) : (
         <ul className='w-80 truncate'>
-          {posts.map(({ id, title, body }) => (
+          {posts.map(({ id, title }) => (
             <li key={id}>
               <Alerter title={title}>
                 <Button variant='ghost'>
