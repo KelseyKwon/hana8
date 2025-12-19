@@ -8,9 +8,7 @@ import { CounterProvider } from './hooks/CounterContext.tsx';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <CounterProvider>
-
-    <App />
-
+      <App />
     </CounterProvider>
   </StrictMode>
 );

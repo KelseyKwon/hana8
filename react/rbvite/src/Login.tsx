@@ -4,7 +4,7 @@ import React, {
   useRef,
   type FormEvent,
 } from 'react';
-import Button from './components/ui/Button';
+import Btn from './components/ui/Btn';
 import LabelInput from './components/ui/LabelInput';
 import { useSession } from './hooks/SessionContext';
 
@@ -54,7 +54,7 @@ export default function Login() {
 
   // 서버에서는 이 formData를 꺼내서 로그인 정보를 얻을 수 있다.
   const loginAction = (formData: FormData) => {
-    const formObj = Object.fromEntries(formData.entries());
+    // const formObj = Object.fromEntries(formData.entries());
     console.log('🚀 ~ loginAction ~ formData:', formData);
     const name = formData.get('name') as string;
     // const Age = formData.get('name') as string; -> 이건 안됨! formData는 String은 되지만 Number는 안됨!
@@ -76,9 +76,9 @@ export default function Login() {
       <form action={loginAction} className='space-y-3'>
         <input type='text' name='name' />
         <input type='number' name='age' />
-        <Button className='bg-blue-500 text-white hover:bg-blue-600'>
+        <Btn className='bg-blue-500 text-white hover:bg-blue-600'>
           LoginAction
-        </Button>
+        </Btn>
       </form>
       <form onSubmit={makeLogin} className='space-y-3'>
         {/* 화면에서 입력받는 것 => 무조건 form! form속에 form 패턴은 좋지 않다 */}
@@ -105,13 +105,13 @@ export default function Login() {
           </div> */}
         <div className='text-center'>
           <button type='reset'>Cancel</button>
-          <Button
+          <Btn
             // type='submit'
             // onClick={() => login(name, age)}
             className='bg-blue-500 text-white hover:bg-blue-600'
           >
             Login
-          </Button>
+          </Btn>
         </div>
       </form>
     </div>

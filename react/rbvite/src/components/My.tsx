@@ -15,9 +15,11 @@ import { useSession, type ItemType } from '../hooks/SessionContext';
 import Item from './Item';
 import Login from '../Login';
 import Profile, { type ProfileHandler } from '../Profile';
-import Button from './ui/Button';
+import { Button } from './ui/Button';
 import LabelInput from './ui/LabelInput';
 import Posts from './Posts';
+import { useFormStatus } from 'react-dom';
+import Btn from './ui/Btn';
 
 // type UR<T> = {current: T | null}
 
@@ -59,7 +61,7 @@ export default function My() {
   };
   // goodSec + 1 의 값이
   // console.log('🚀 ~ goodSec:', goodSec);
-  const { clear, reset } = useInterval(ff, 1000);
+  const { reset, clear } = useInterval(ff, 1000);
 
   // useInterval(ff, 1000, goodSec + 1);
 
@@ -117,12 +119,13 @@ export default function My() {
   };
 
   const [results, search, isPending] = useActionState(
-    async (prev: ItemType[], formData: FormData) => {
-      const str = String(formData.get('ActionState') ?? '');
-      await new Promise((r) => setTimeout(r, 1500));
+    async (preResults: ItemType[], formData: FormData) => {
+      const str = formData.get('ActionState') as string;
+      console.log('******', preResults, str);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       return session.cart.filter((item) => item.name.includes(str));
     },
-    [] as ItemType[]
+    []
   );
 
   return (
@@ -165,8 +168,11 @@ export default function My() {
         </h2>
       )}
       {/* input값이 바뀔때마다 아래에 검색 값이 나오도록 설정 */}
-      <form action={search}>
+      {/* <form action={search}> */}
+      <form className='flex gap-2 items-end'>
         <LabelInput label='ActionState' autoComplete='off' />
+        <Button formAction={search}>Action</Button>
+        <SearchButton />
       </form>
       <LabelInput
         label='Transition'
@@ -189,12 +195,23 @@ export default function My() {
               toggleAdding={toggleAdding}
             />
           ) : (
-            <Button onClick={toggleAdding} className=''>
+            <Btn onClick={toggleAdding} className=''>
               <PlusIcon />
-            </Button>
+            </Btn>
           )}
         </li>
       </ul>
     </>
+  );
+}
+
+function SearchButton() {
+  const { pending, data } = useFormStatus();
+  if (data) console.log('ddddddd>>', data, pending);
+  return <button disabled={pending}>SearchButton</button>;
+  return (
+    <Button variant={'secondary'} disabled={pending}>
+      SearchButton
+    </Button>
   );
 }
