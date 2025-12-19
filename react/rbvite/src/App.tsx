@@ -10,6 +10,7 @@ import Profile, { type ProfileHandler } from './components/Profile';
 import { SessionProvider } from './hooks/SessionContext';
 import Nav from './Nav';
 import NotFound from './NotFound';
+import ItemLayout from './components/ItemLayout';
 
 function App() {
   const profileHandlerRef = useRef<ProfileHandler>(null);
@@ -26,7 +27,7 @@ function App() {
             path='/profile'
             element={<Profile ref={profileHandlerRef} />}
           />
-          <Route path='/items'>
+          <Route path='/items' element={<ItemLayout />}>
             <Route index element={<Items />} />
             <Route path=':id' element={<Item />} />
           </Route>

@@ -1,21 +1,18 @@
 import { useSession, type ItemType } from '@/hooks/SessionContext';
 import { useThrottle } from '@/hooks/useTimer';
-import { PlusIcon } from 'lucide-react';
 import {
   useDeferredValue,
   useState,
   useTransition,
   type ChangeEvent,
 } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Btn from './ui/Btn';
+import { Link } from 'react-router-dom';
 import LabelInput from './ui/LabelInput';
 import Spinner from './ui/Spinner';
 
 export default function Items() {
   const { session } = useSession();
   const [searchResult, setSearchResult] = useState<ItemType[]>([]);
-  const navigate = useNavigate();
   const [isSearching, startSearchTransition] = useTransition();
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     startSearchTransition(async () => {
@@ -41,26 +38,17 @@ export default function Items() {
           {searchStr} : {deferredStr} : {debouncedSearchStr}
         </h2>
       )}
-      <LabelInput
-        label='Transition'
-        onChange={handleSearch}
-        autoComplete='off'
-      />
+      <LabelInput label='Search' onChange={handleSearch} autoComplete='off' />
       <ul>
         {session.cart
           ?.filter((item) => item.name.includes(debouncedSearchStr))
           .map((item) => (
             <li key={item.id}>
-              <Link to={item.id.toString()}>
+              <Link to={`${item.id}?q=111`}>
                 {item.id}. {item.name}
               </Link>
             </li>
           ))}
-        <li className='text-center'>
-          <Btn onClick={() => navigate('0')} className=''>
-            <PlusIcon />
-          </Btn>
-        </li>
       </ul>
     </>
   );
