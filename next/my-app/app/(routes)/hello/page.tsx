@@ -2,18 +2,36 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import SayHello from './SayHello';
 
 export const dynamic = 'auto';
 
 export default function Hello() {
   const pathname = usePathname();
+  return (
+    <>
+      <h1>Hello Page: {pathname}</h1>
+      <div>
+        {/* <Suspense fallback={<h1>...</h1>}> */}
+        <SayHello name={'Next'} />
+        {/* </Suspense> */}
+        <Suspense fallback={<h1>Loading ID...</h1>}>
+          <SearchParamId />
+        </Suspense>
+      </div>
+    </>
+  );
+}
+
+function SearchParamId() {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const params = new URLSearchParams(searchParams.toString());
 
   const id = searchParams.get('id');
-  const name = searchParams.get('name');
+  // const name = searchParams.get('name');
 
   const router = useRouter();
   const make200 = () => {
@@ -25,17 +43,5 @@ export default function Hello() {
     // router.push('/');
   };
 
-  return (
-    <>
-      <h1>
-        Hello Page: {id} - {pathname}
-      </h1>
-      <div suppressHydrationWarning>
-        {/* <Suspense fallback={<h1>...</h1>}> */}
-        <SayHello name={name ?? 'Next'} />
-        {/* </Suspense> */}
-        <button onClick={make200}>make200</button>
-      </div>
-    </>
-  );
+  return <button onClick={make200}>ID: {id}</button>;
 }

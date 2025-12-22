@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 
 export const dynamic = 'auto';
 
