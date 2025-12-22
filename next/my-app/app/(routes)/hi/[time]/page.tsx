@@ -3,6 +3,12 @@ import { use } from 'react';
 type Props = {
   params: Promise<{ time: 'morning' | 'afternoon' | 'evening' }>;
 };
+
+// dynamic인 것을 static으로 만들기!
+export async function generateStaticParams() {
+  return [{ time: 'morning' }, { time: 'afternoon' }, { time: 'evening' }];
+}
+
 export default function Hi({ params }: Props) {
   // params의 Promise가 벗겨진다. -> morning, afternoon, evening밖에 안된다.
   const { time } = use(params);

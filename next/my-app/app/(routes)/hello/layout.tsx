@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { PropsWithChildren } from 'react';
 
-export const dynamic = 'auto';
+// export const dynamic = 'auto';
 
 export default function HelloLayout({ children }: PropsWithChildren) {
   return (

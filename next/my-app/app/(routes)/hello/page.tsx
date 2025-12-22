@@ -1,7 +1,12 @@
 // onCLick을 사용하는 SayHello을 사용하므로 -> client을 써야 함! (server 말고))
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { Suspense } from 'react';
 import SayHello from './SayHello';
 
@@ -9,6 +14,7 @@ export const dynamic = 'auto';
 
 export default function Hello() {
   const pathname = usePathname();
+  const p = useParams();
   return (
     <>
       <h1>Hello Page: {pathname}</h1>
