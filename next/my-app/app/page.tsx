@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Hello from './hello/page';
+import Hello from './(routes)/hello/page';
 
 export default function Home() {
   return (

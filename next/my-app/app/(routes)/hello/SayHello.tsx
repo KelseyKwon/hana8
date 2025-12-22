@@ -4,8 +4,9 @@ export default function SayHello({ name }: { name: string }) {
     <button
       onClick={() => alert(`Hello, ${name}!`)}
       className="cursor border-2"
+      suppressHydrationWarning
     >
-      Hello, {name}
+      Hello, {name} - {Date.now()}
     </button>
   );
 }
