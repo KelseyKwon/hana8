@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { PropsWithChildren } from 'react';
+import { TIMES } from './constants';
 
-const TIMES = ['morning', 'afternoon', 'evening'];
 export default function HiLayout({ children }: PropsWithChildren) {
   return (
     <div className="border-2 border-green-300">
