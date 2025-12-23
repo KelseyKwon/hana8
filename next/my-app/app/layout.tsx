@@ -24,7 +24,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const x = 1;
   return (
     <html lang="en">
       <body
@@ -33,7 +32,9 @@ export default function RootLayout({
         <nav className="mb-5 border-b pb-5">
           Navigator <Link href={'/hello'}>Hello</Link>|
           <Link href={'/hi'}>Hi</Link>|<Link href={'/shop/123'}>123</Link>|
-          <Link href={'/shop/456'}>456</Link>
+          <Link href={'/shop/456'}>456</Link>|
+          <Link href={'/intercept'}>Intercept</Link>|
+          <Link href={'/photos'}>Photos</Link>
         </nav>
         <div className="border p-3">{children}</div>
         <footer className="text-center">Footer</footer>

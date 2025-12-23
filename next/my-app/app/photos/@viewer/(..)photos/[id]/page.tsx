@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { use } from 'react';
-import type { Photo } from '../page';
+import type { Photo } from '@/app/photos/page';
+import Modal from '@/components/Modal';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -13,7 +14,7 @@ export default function PhotoView({ params }: Props) {
   ) as Photo;
 
   return (
-    <>
+    <Modal>
       <h1>{author} </h1>
       <Image
         src={download_url}
@@ -23,6 +24,6 @@ export default function PhotoView({ params }: Props) {
         placeholder="blur"
         blurDataURL="/file.svg"
       />
-    </>
+    </Modal>
   );
 }

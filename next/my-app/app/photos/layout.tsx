@@ -1,15 +1,14 @@
-import type { ReactNode } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 
-type Props = {
-  children: ReactNode;
-  modal: ReactNode;
-};
-
-export default function PhotosLayout({ children, modal }: Props) {
+export default function PhotosLayout({
+  children,
+  viewer,
+}: PropsWithChildren<{ viewer: ReactNode }>) {
   return (
     <>
+      <h1 className="text-center text-xl">Photos</h1>
       {children}
-      {modal}
+      {viewer}
     </>
   );
 }
