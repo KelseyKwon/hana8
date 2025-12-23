@@ -32,8 +32,7 @@ export default function RootLayout({
       >
         <nav className="mb-5 border-b pb-5">
           Navigator <Link href={'/hello'}>Hello</Link>|
-          <Link href={'/hi'}>Hi</Link>
-          <Link href={'/shop/123'}>123</Link>
+          <Link href={'/hi'}>Hi</Link>|<Link href={'/shop/123'}>123</Link>|
           <Link href={'/shop/456'}>456</Link>
         </nav>
         <div className="border p-3">{children}</div>
