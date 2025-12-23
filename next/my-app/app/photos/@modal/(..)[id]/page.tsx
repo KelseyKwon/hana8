@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import Modal from '@/components/Modal';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -28,7 +29,7 @@ export default async function Page({ params }: Props) {
   if (!photo) notFound();
 
   return (
-    <>
+    <Modal>
       <h1>{photo.author} </h1>
       <Image
         src={photo.download_url}
@@ -38,6 +39,6 @@ export default async function Page({ params }: Props) {
         className="object-cover"
       />
       <h3>{photo.url}</h3>
-    </>
+    </Modal>
   );
 }
