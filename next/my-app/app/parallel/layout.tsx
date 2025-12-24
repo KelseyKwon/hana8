@@ -14,7 +14,6 @@ export default function ParallelLayout({
   login,
   profile,
 }: Props) {
-  const didLogin = true;
   return (
     <div>
       <h1 className="text-center">Parallel Layout</h1>
@@ -25,11 +24,8 @@ export default function ParallelLayout({
       </div>
       <div>{children}</div>
       <div className="grid grid-cols-2 gap-3">
-        {didLogin ? (
-          <div className="border">{login}</div>
-        ) : (
-          <div className="border">{profile}</div>
-        )}
+        <div className="border">{login}</div>
+        <div className="border">{profile}</div>
       </div>
     </div>
   );

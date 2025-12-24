@@ -1,6 +1,7 @@
 // onCLick을 사용하는 SayHello을 사용하므로 -> client을 써야 함! (server 말고))
 'use client';
 
+import type { Route } from 'next';
 import {
   useParams,
   usePathname,
@@ -45,7 +46,7 @@ function SearchParamId() {
 
     // use200을 눌러도 어떤 액션이 나타나게 하기 -> 서버에게 알려주기 위해 주소창을 바꾼다.
     // foraward, push, refresh 등이 있다.
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}` as Route);
     // router.push('/');
   };
 
