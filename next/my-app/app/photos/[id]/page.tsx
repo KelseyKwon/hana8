@@ -8,6 +8,16 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+export const generateStaticParams = async () => {
+  const photos: Awaited<Photo[]> = await fetch(
+    `https://picsum.photos/v2/list?limit=${10}`,
+  ).then((res) => res.json());
+  // [photoId: '0']
+  return photos.map(({ id }) => ({ id }));
+};
+
+export const dynamicParams = false;
+
 export default function PhotoView({ params }: Props) {
   const { id } = use(params);
   const { author, download_url, width, height } = use(

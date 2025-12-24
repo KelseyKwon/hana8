@@ -10,7 +10,10 @@ export type Photo = {
   height: number;
 };
 
-const getPhotos = async (n: number = 10): Promise<Photo[]> =>
+// ISR : Incremental Static Regeneration
+export const revalidate = 86400; // 60 seconds
+
+const getPhotos = async (n: number = 20): Promise<Photo[]> =>
   fetch(`https://picsum.photos/v2/list?limit=${n}`).then((res) => res.json());
 
 export default function PhotosPage() {

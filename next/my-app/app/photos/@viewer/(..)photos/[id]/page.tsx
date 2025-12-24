@@ -11,7 +11,7 @@ type Props = {
 export const generateStaticParams = async () => {
   // const photos:Photo[]>= await fetch(`https://picsum.photos/v2/list?limit=${10}`).then( -> 이건 안됨.
   const photos: Awaited<Photo[]> = await fetch(
-    `https://picsum.photos/v2/list?limit=${10}`,
+    `https://picsum.photos/v2/list?limit=${20}`,
   ).then(
     // -> 이게 진정으로 Promise를 벗긴 awaited라고 봄!
     (res) => res.json(),
