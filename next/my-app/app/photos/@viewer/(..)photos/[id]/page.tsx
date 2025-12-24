@@ -1,5 +1,6 @@
+'use cache';
+
 import Image from 'next/image';
-import { use } from 'react';
 import { blurDataURL_beige } from '@/app/(routes)/hi/constants';
 import type { Photo } from '@/app/photos/page';
 import Modal from '@/components/Modal';
@@ -8,6 +9,7 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+// SSG인데 캐시를 사용안함 -> 그래서 정적인 html을 사용할 수 있다는 에러이다!
 export const generateStaticParams = async () => {
   // const photos:Photo[]>= await fetch(`https://picsum.photos/v2/list?limit=${10}`).then( -> 이건 안됨.
   const photos: Awaited<Photo[]> = await fetch(
@@ -20,11 +22,11 @@ export const generateStaticParams = async () => {
   return photos.map(({ id }) => ({ id }));
 };
 
-export default function PhotoView({ params }: Props) {
-  const { id } = use(params);
-  const { author, download_url, width, height } = use(
-    fetch(`https://picsum.photos/id/${id}/info`).then((res) => res.json()),
-  ) as Photo;
+export default async function PhotoView({ params }: Props) {
+  const { id } = await params;
+  const { author, download_url, width, height } = (await fetch(
+    `https://picsum.photos/id/${id}/info`,
+  ).then((res) => res.json())) as Photo;
 
   return (
     <Modal>

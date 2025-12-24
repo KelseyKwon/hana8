@@ -11,7 +11,7 @@ import {
 import { Suspense } from 'react';
 import SayHello from './SayHello';
 
-export const dynamic = 'auto';
+// export const dynamic = 'auto';
 
 export default function Hello() {
   const pathname = usePathname();
@@ -21,9 +21,9 @@ export default function Hello() {
       <h1>Hello Page: {pathname}</h1>
       <div>
         {/* <Suspense fallback={<h1>...</h1>}> */}
-        <SayHello name={'Next'} />
         {/* </Suspense> */}
         <Suspense fallback={<h1>Loading ID...</h1>}>
+          <SayHello name={'Next'} />
           <SearchParamId />
         </Suspense>
       </div>

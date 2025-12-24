@@ -3,6 +3,8 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  // cache component를 default로 잡기,
+  cacheComponents: true,
   experimental: {
     typedEnv: true,
   },
