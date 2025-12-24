@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
+import { ThemeProvider } from 'next-themes';
+import { ModeToggle } from '@/components/ModeToggle';
+import { Button } from '@/components/ui/button';
 import './globals.css';
 
 const geistSans = Geist({
@@ -25,20 +28,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} mx-5 antialiased`}
       >
-        <nav className="mb-5 border-b pb-5">
-          Navigator <Link href={'/hello'}>Hello</Link>|
-          <Link href={'/hi'}>Hi</Link>|<Link href={'/shop/123'}>123</Link>|
-          <Link href={'/shop/456'}>456</Link>|
-          <Link href={'/intercept'}>Intercept</Link>|
-          <Link href={'/photos'}>Photos</Link>|
-          <Link href={'/caches'}>Caches</Link>
-        </nav>
-        <div className="border p-3">{children}</div>
-        <footer className="text-center">Footer</footer>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <nav className="mb-5 border-b pb-5">
+            <div>
+              Navigator <Link href={'/hello'}>Hello</Link>|
+              <Link href={'/hi'}>Hi</Link>|<Link href={'/shop/123'}>123</Link>|
+              <Link href={'/shop/456'}>456</Link>|
+              <Link href={'/intercept'}>Intercept</Link>|
+              <Link href={'/photos'}>Photos</Link>|
+              <Link href={'/caches'}>Caches</Link>
+              <Button variant={'apply'}>SignIn</Button>
+            </div>
+            <ModeToggle />
+          </nav>
+          <div className="border p-3">{children}</div>
+
+          <footer className="text-center">Footer</footer>
+        </ThemeProvider>
       </body>
     </html>
   );
