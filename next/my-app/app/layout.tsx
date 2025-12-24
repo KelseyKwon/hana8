@@ -34,7 +34,8 @@ export default function RootLayout({
           <Link href={'/hi'}>Hi</Link>|<Link href={'/shop/123'}>123</Link>|
           <Link href={'/shop/456'}>456</Link>|
           <Link href={'/intercept'}>Intercept</Link>|
-          <Link href={'/photos'}>Photos</Link>
+          <Link href={'/photos'}>Photos</Link>|
+          <Link href={'/caches'}>Caches</Link>
         </nav>
         <div className="border p-3">{children}</div>
         <footer className="text-center">Footer</footer>

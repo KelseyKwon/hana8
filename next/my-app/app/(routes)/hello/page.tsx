@@ -2,12 +2,7 @@
 'use client';
 
 import type { Route } from 'next';
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import SayHello from './SayHello';
 
@@ -15,7 +10,7 @@ import SayHello from './SayHello';
 
 export default function Hello() {
   const pathname = usePathname();
-  const p = useParams();
+  // const p = useParams();
   return (
     <>
       <h1>Hello Page: {pathname}</h1>
@@ -34,7 +29,6 @@ export default function Hello() {
 function SearchParamId() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
   const params = new URLSearchParams(searchParams.toString());
 
   const id = searchParams.get('id');

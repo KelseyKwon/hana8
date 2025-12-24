@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { PropsWithChildren } from 'react';
+import { type PropsWithChildren, Suspense } from 'react';
 
 // export const dynamic = 'auto';
 
@@ -16,7 +16,9 @@ export default function HelloLayout({ children }: PropsWithChildren) {
 
         {/* page가 나올 자리를 잡기 */}
       </div>
-      <div className="border p-5 text-center">{children}</div>
+      <Suspense fallback={<h1>Loading Sub Page...</h1>}>
+        <div className="border p-5 text-center">{children}</div>
+      </Suspense>
     </>
   );
 }
