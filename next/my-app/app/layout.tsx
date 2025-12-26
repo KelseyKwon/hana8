@@ -46,7 +46,7 @@ export default function RootLayout({
               <Link href={'/intercept'}>Intercept</Link>|
               <Link href={'/photos'}>Photos</Link>|
               <Link href={'/caches'}>Caches</Link>|
-              <Link href={'/board'}>Board</Link>
+              <Link href={'/board/edit'}>Board</Link>
               <Button variant={'apply'}>SignIn</Button>
             </div>
             <ModeToggle />
