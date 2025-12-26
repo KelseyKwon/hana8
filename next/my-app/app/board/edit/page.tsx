@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { type PostError, savePost } from './posts.action';
+import { type Post, type PostError, savePost } from './posts.action';
 
 type Folder = {
   id: number;
@@ -32,16 +32,34 @@ const FOLDERS: Folder[] = [
 export default function PostEdit() {
   const [isOpen, toggleOpen] = useReducer((p) => !p, false);
   const [folder, setFolder] = useState<Folder>(FOLDERS[0]);
+  // QQQ : 여기가 Partial이여야 하는 이유
+  const [post, setPost] = useState<Partial<Post>>();
+  // checkbox을 post랑 분리하기
+  const [localPrivate, togglePrivate] = useReducer((p) => !p, false);
 
   // action (아래에 save 함수에서는) formData만 받았는데, state에서는 에러의 상태도 바꿀 수 있다!
   const [postError, save, isPending] = useActionState(
+    // save는 첫번쨰 : error, 두번쨰는 formData를 반환
     async (_: PostError | undefined, formData: FormData) => {
+      formData.set('isprivate', localPrivate ? 'on' : '');
+      // formData가 서버에 날라가기 전에, isPrivate을 on으로 세팅해서 주고,
       const [err, data] = await savePost(formData);
-      if (err) return err;
+      if (err) {
+        setPost(err.data);
+        return err;
+      }
+
+      setPost(data);
       console.log('savedData>>', data);
     },
     undefined,
   );
+
+  // useEffect(() => {
+  //   if (!post) return;
+  //   console.log('>>>', post);
+  //   setLocalPrivate(post?.isprivate);
+  // }, [post?.isprivate]);
 
   // const save = async (formData: FormData) => {
   //   const [err, data] = await savePost(formData);
@@ -50,6 +68,7 @@ export default function PostEdit() {
   // };
   // 아래는 인터랙션이 일어나니까 클라이언트 컴포넌트가 되어야 한다.
   // Prob -> client & server component가 섞여 있음!
+
   return (
     <>
       <h1 className="text-center font-semibold text-2xl">게시글 작성</h1>
@@ -57,7 +76,7 @@ export default function PostEdit() {
         <div className="flex gap-2">
           {/* 아이콘을 위아래로 바꿀려면, 이게 열렸는지 닫혔는지 알아야 한다 */}
           <DropdownMenu onOpenChange={toggleOpen}>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               {/* 선택된 폴더가 아래에 나와야 한다. */}
               <Button variant="outline">
                 {folder.name}
@@ -77,13 +96,34 @@ export default function PostEdit() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Input type="text" name="title" placeholder="title..." />
+          <Input type="hidden" name="folder" defaultValue={folder.id} />
+
+          <Input
+            type="text"
+            name="title"
+            defaultValue={post?.title}
+            placeholder="title..."
+          />
         </div>
 
         <div className="flex gap-2">
+          {/* QQQ 이것의 문제점 */}
           <Label htmlFor="isPrivate">
-            <Checkbox id="isPrivate" name="private" defaultChecked={true} />
-            비공개 글
+            <Checkbox
+              id="isPrivate"
+              name="isprivate"
+              checked={localPrivate}
+              // check여부를 나한테 보내기
+              // onCheckedChange={(checked) => {
+              //   // if (post) {
+              //   //   setPost({ ...post, isprivate: isprivate === true });
+              //   // }
+              //   setLocalPrivate(checked === true);
+              // }}
+              onClick={togglePrivate}
+            />
+            비공개 글 {post?.isprivate ? 'True' : 'False'} ::
+            {localPrivate ? 'True' : 'False'}
           </Label>
         </div>
 
@@ -94,7 +134,11 @@ export default function PostEdit() {
             className="cursor-pointer hover:bg-muted"
           />
         ) : (
-          <Textarea name="content" placeholder="content..." />
+          <Textarea
+            name="content"
+            defaultValue={post?.content}
+            placeholder="content..."
+          />
         )}
 
         {!!postError && <span className="text-red-500">{postError.error}</span>}

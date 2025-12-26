@@ -1,11 +1,13 @@
 'use server';
 export type Post = {
+  folder: number;
   title: string;
   content: string;
   isprivate: boolean;
 };
 export type PostError = {
   error: string;
+  data: Partial<Post>;
 };
 // type : error거나, Post인거.
 export const savePost = async (
@@ -17,11 +19,13 @@ export const savePost = async (
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
+  const folder = Number(formData.get('folder'));
   const title = formData.get('title') as string;
-  const isprivate = formData.get('private') === 'on';
+  const isprivate = formData.get('isprivate') === 'on';
   const content = formData.get('content') as string;
+  const data = { folder, title, isprivate, content };
 
-  if (!title) return [{ error: 'Input the title!' }];
+  if (!title) return [{ error: 'Input the title!', data }];
 
-  return [undefined, { title, content, isprivate }];
+  return [undefined, data];
 };
