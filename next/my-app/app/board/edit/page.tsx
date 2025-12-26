@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { type Post, type PostError, savePost } from './posts.action';
 
 type Folder = {
@@ -106,24 +107,20 @@ export default function PostEdit() {
           />
         </div>
 
-        <div className="flex gap-2">
-          {/* QQQ 이것의 문제점 */}
+        <div className="grid grid-cols-2 gap-2">
           <Label htmlFor="isPrivate">
             <Checkbox
               id="isPrivate"
               name="isprivate"
               checked={localPrivate}
-              // check여부를 나한테 보내기
-              // onCheckedChange={(checked) => {
-              //   // if (post) {
-              //   //   setPost({ ...post, isprivate: isprivate === true });
-              //   // }
-              //   setLocalPrivate(checked === true);
-              // }}
               onClick={togglePrivate}
             />
             비공개 글 {post?.isprivate ? 'True' : 'False'} ::
             {localPrivate ? 'True' : 'False'}
+          </Label>
+          <Label htmlFor="isPublic">
+            <Switch id="isPublic" name="ispublic" />
+            홈에 공개
           </Label>
         </div>
 
