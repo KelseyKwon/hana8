@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { ThemeProvider } from 'next-themes';
 import { ModeToggle } from '@/components/ModeToggle';
+import UserProfile from '@/components/UserProfile';
 import { Button } from '@/components/ui/button';
 import './globals.css';
 
@@ -49,7 +50,10 @@ export default function RootLayout({
               <Link href={'/board/edit'}>Board</Link>
               <Button variant={'apply'}>SignIn</Button>
             </div>
-            <ModeToggle />
+            <div>
+              <ModeToggle />
+              <UserProfile />
+            </div>
           </nav>
           <div className="border p-3">{children}</div>
 
