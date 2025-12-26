@@ -1,9 +1,9 @@
 'use client';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { useActionState, useReducer, useState } from 'react';
+import CheckSwitch from '@/components/CheckSwitch';
 import { Textarea } from '@/components/text-area';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,8 +13,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { type Post, type PostError, savePost } from './posts.action';
 
 type Folder = {
@@ -107,7 +105,7 @@ export default function PostEdit() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        {/* <div className="grid grid-cols-2 gap-2">
           <Label htmlFor="isPrivate">
             <Checkbox
               id="isPrivate"
@@ -122,7 +120,11 @@ export default function PostEdit() {
             <Switch id="isPublic" name="ispublic" />
             홈에 공개
           </Label>
-        </div>
+        </div> */}
+        <CheckSwitch
+          privateChecked={localPrivate}
+          onTogglePrivate={togglePrivate}
+        />
 
         {folder.type === 'file' ? (
           <Input
