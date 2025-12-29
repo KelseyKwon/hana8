@@ -21,3 +21,6 @@ PATCH {{api}}/books/2
     "title": "New title",
     "writer": "Nayoun"
 }
+
+### delete a book
+DELETE {{api}}/books/2

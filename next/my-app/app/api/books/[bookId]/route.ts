@@ -7,19 +7,35 @@ type Params = {
   params: Promise<{ bookId: string }>;
 };
 
-const getBook = async ({ params }: Params, isIndex: boolean = false) => {
+type ReturnBookOrIndex<T extends boolean = false> = T extends true
+  ? number
+  : Book;
+
+// 아래는 너무 지저분져서 잘 안씀 -> generic!
+// //====== function overload =======//
+// function getBook({params}: Params, i: true): Promise<number>
+// function getBook({params}: Params, i: false): Promise<number>
+// function getBook({params}: Params): Promise<number>
+
+const getBook = async <T extends boolean = false>(
+  { params }: Params,
+  isIndex?: T,
+) => {
   const { bookId } = await params;
   const fn = isIndex ? books.findIndex : books.find;
   // const book = books.find((book) => book.id === +bookId);
-  const book = fn((book) => book.id === +bookId);
+  const book = fn.bind(books)((book) => book.id === +bookId);
 
-  if (!book) throw new HttpError(`Not found book (id: #${bookId}`, 404);
-  return book;
+  // findINdex에서 못찾을 때, find에서 못 찾을 때
+  if (book === -1 || book === undefined)
+    throw new HttpError(`Not found book (id: #${bookId}`, 404);
+  // return book as ReturnBookOrIndex<T>;
+  return book as ReturnBookOrIndex<T>;
 };
 
 export async function PATCH(req: NextRequest, { params }: Params) {
   try {
-    const book = (await getBook({ params })) as Book;
+    const book = await getBook({ params });
     // 수정하고 싶은 것
     const { title, writer } = await req.json();
     book.title = title;
@@ -34,10 +50,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 export async function DELETE(_req: NextRequest, { params }: Params) {
   try {
     // 하지만 book이라는 객체말고, bookIdx가 필요하다 -> 뒤에 인자를 더한다! "DELETE"
-    const bookIdx = (await getBook({ params }, true)) as number;
+    const bookIdx = await getBook({ params }, true);
 
     // books라는 객체를 새로 만들지 않아야 한다 (주소를 안 만들어야 한다) => 따라서 [...] 보다는, splice로 만ㄷㄴ다!
-    books.splice(bookIdx, 1);
+    // books.splice(bookIdx, 1);
+    return NextResponse.json(books.splice(bookIdx, 1));
   } catch (err) {
     return errorResponse(err);
   }
@@ -45,6 +62,8 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
 export async function GET(_req: NextRequest, { params }: Params) {
   try {
+    console.log('*****', process.env.DB_PASSWD);
+    console.log('*****', process.env.DB);
     const book = await getBook({ params });
     /**  -> getBook으로 뺴기
     const { bookId } = await params;
