@@ -12,7 +12,7 @@ export const config = {
   //   matcher: ['/photos', '/api/books/:path*'], 직접 명시해주는 것
   // 아닌 것을 알려주는 것
   matcher: [
-    '/((?!login|regist|_next/static|_next/image|auth|favicon.ico|robots.txt|images|api/books|$).*)',
+    '/((?!login|regist|_next/static|_next/image|auth|api/auth|favicon.ico|robots.txt|images|api/books|$).*)',
     // '/api/:path*',
     // 'posts/:postId*/edit',
   ],
