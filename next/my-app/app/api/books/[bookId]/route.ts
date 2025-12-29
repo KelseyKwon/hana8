@@ -34,8 +34,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 export async function DELETE(_req: NextRequest, { params }: Params) {
   try {
     // 하지만 book이라는 객체말고, bookIdx가 필요하다 -> 뒤에 인자를 더한다! "DELETE"
-    const bookId = (await getBook({ params }, true)) as number;
-    const bookIdx = books.findIndex((book) => book.id === bookId);
+    const bookIdx = (await getBook({ params }, true)) as number;
 
     // books라는 객체를 새로 만들지 않아야 한다 (주소를 안 만들어야 한다) => 따라서 [...] 보다는, splice로 만ㄷㄴ다!
     books.splice(bookIdx, 1);
