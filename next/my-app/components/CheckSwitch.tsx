@@ -1,10 +1,10 @@
 'use client';
 
 import { useId, useReducer } from 'react';
+import { cn } from '@/lib/utils';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
 import { Switch } from './ui/switch';
-import { cn } from '@/lib/utils';
 
 type Props = {
   type?: 'switch' | 'check';
@@ -15,18 +15,17 @@ type Props = {
   setCheckedAction?: (checked: boolean) => void;
 };
 
-const setClassnames = (variant:Props['variant'] | 'primary') => ({
-    border: `border-${variant}`,
-        bg: `bg-${variant}`,
-        text: `text-${variant}-foreground`,
-});
-
+const setClassnames = (variant: Props['variant'] | 'primary') => [
+  `border-${variant}`,
+  `bg-${variant}`,
+  `text-${variant}-foreground`,
+];
 const CheckVariant = {
-    default: setClassnames('primary'),
+  default: setClassnames('primary'),
   destructive: [...setClassnames('destructive'), 'text-white'],
   secondary: setClassnames('secondary'),
   muted: setClassnames('muted'),
-}
+};
 
 export default function CheckSwitch({
   type = 'check',
@@ -42,12 +41,10 @@ export default function CheckSwitch({
 
   const css = CheckVariant[variant];
   console.log('*******', css);
-  
+
   const Compo = type === 'switch' ? Switch : Checkbox;
 
-  
-
-return (
+  return (
     // flex를 컨트롤하는 것은 외부에서 하는 것이 더 유리하다
     <Label
       htmlFor={checkId}
