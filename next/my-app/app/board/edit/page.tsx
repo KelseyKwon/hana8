@@ -34,13 +34,15 @@ export default function PostEdit() {
   // QQQ : 여기가 Partial이여야 하는 이유
   const [post, setPost] = useState<Partial<Post>>();
   // checkbox을 post랑 분리하기
-  const [localPrivate, togglePrivate] = useReducer((p) => !p, false);
+  // const [localPrivate, togglePrivate] = useReducer((p) => !p, false);
+  const [isShowButtons, setShowButtons] = useState(false);
 
   // action (아래에 save 함수에서는) formData만 받았는데, state에서는 에러의 상태도 바꿀 수 있다!
   const [postError, save, isPending] = useActionState(
     // save는 첫번쨰 : error, 두번쨰는 formData를 반환
     async (_: PostError | undefined, formData: FormData) => {
-      formData.set('isprivate', localPrivate ? 'on' : '');
+      // formData.set('isprivate', localPrivate ? 'on' : '');
+      // console.log('fff>>', formData.get('isprivate'));
       // formData가 서버에 날라가기 전에, isPrivate을 on으로 세팅해서 주고,
       const [err, data] = await savePost(formData);
       if (err) {
@@ -101,30 +103,60 @@ export default function PostEdit() {
             type="text"
             name="title"
             defaultValue={post?.title}
+            className='bg-muted'
             placeholder="title..."
           />
         </div>
 
-        {/* <div className="grid grid-cols-2 gap-2">
-          <Label htmlFor="isPrivate">
-            <Checkbox
-              id="isPrivate"
-              name="isprivate"
-              checked={localPrivate}
-              onClick={togglePrivate}
-            />
-            비공개 글 {post?.isprivate ? 'True' : 'False'} ::
-            {localPrivate ? 'True' : 'False'}
-          </Label>
-          <Label htmlFor="isPublic">
-            <Switch id="isPublic" name="ispublic" />
-            홈에 공개
-          </Label>
-        </div> */}
-        <CheckSwitch
-          privateChecked={localPrivate}
-          onTogglePrivate={togglePrivate}
-        />
+        <div className="grid grid-cols-2 gap-2">
+          <CheckSwitch
+            label="default"
+            name="isprivate"
+            checked={post?.isprivate}
+            setCheckedAction={setShowButtons}
+          />
+          <CheckSwitch
+            label="destructive"
+            name="isprivate"
+            checked={post?.isprivate}
+            variant="destructive"
+            setCheckedAction={setShowButtons}
+          />
+          <CheckSwitch
+            label="secondary"
+            name="isprivate"
+            checked={post?.isprivate}
+            variant="secondary"
+            setCheckedAction={setShowButtons}
+          />
+          <CheckSwitch
+            label="muted"
+            name="isprivate"
+            checked={post?.isprivate}
+            variant="muted"
+            setCheckedAction={setShowButtons}
+          />
+
+          <CheckSwitch label="홈에 공개" type="switch" name="ispublic" />
+          <CheckSwitch
+            label="secondary"
+            type="switch"
+            variant="secondary"
+            name="ispublic"
+          />
+          <CheckSwitch
+            label="destructive"
+            type="switch"
+            variant="destructive"
+            name="ispublic"
+          />
+          <CheckSwitch
+            label="muted"
+            type="switch"
+            variant="muted"
+            name="ispublic"
+          />
+        </div>
 
         {folder.type === 'file' ? (
           <Input
@@ -137,25 +169,28 @@ export default function PostEdit() {
             name="content"
             defaultValue={post?.content}
             placeholder="content..."
+            className={`bg-${post?.isprivate ? 'red-900' : 'blue-900'}`}
           />
         )}
 
         {!!postError && <span className="text-red-500">{postError.error}</span>}
 
-        <div className="flex justify-around">
-          {/* 아래 버튼들은 사용자 인터랙션이 일어난다 -> 따라서 서버와 혼용되므로 formAction을 붙이면 된다! */}
-          {/* button들은 type이 가장 중요! form안에 있는 컨텐트들은 type이 가장 중요*/}
-          <Button type="reset" variant={'secondary'}>
-            취소
-          </Button>
-          <Button type="button" variant={'destructive'}>
-            삭제
-          </Button>
-          {/* 저장이 될 동안에는 disabled */}
-          <Button type="submit" variant={'apply'} disabled={isPending}>
-            저장{isPending && '...'}
-          </Button>
-        </div>
+        {/* 아래 버튼들은 사용자 인터랙션이 일어난다 -> 따라서 서버와 혼용되므로 formAction을 붙이면 된다! */}
+        {/* button들은 type이 가장 중요! form안에 있는 컨텐트들은 type이 가장 중요*/}
+        {isShowButtons ?? (
+          <div className="flex justify-around">
+            <Button type="reset" variant={'secondary'}>
+              취소
+            </Button>
+            <Button type="button" variant={'destructive'}>
+              삭제
+            </Button>
+            {/* 저장이 될 동안에는 disabled */}
+            <Button type="submit" variant={'apply'} disabled={isPending}>
+              저장{isPending && '...'}
+            </Button>
+          </div>
+        )}
       </form>
     </>
   );
