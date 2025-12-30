@@ -14,6 +14,13 @@ export const login = async (provider: Provider, formData: FormData) => {
   const redirectTo = formData.get('redirectTo') as string;
   await signIn(provider, { redirectTo });
 };
+export const loginEmail = async (formData: FormData) => {
+  const redirectTo = formData.get('redirectTo') as string;
+  const email = formData.get('redirectTo') as string;
+  const passwd = formData.get('redirectTo') as string;
+  await signIn('credentials', { redirectTo, email, passwd });
+};
+
 export const loginGoogle = async (formData: FormData) =>
   login('google', formData);
 export const loginGithub = async (formData: FormData) =>
