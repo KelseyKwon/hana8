@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { AuthError } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Github from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
@@ -44,16 +44,20 @@ export const {
      *
      * @return Promise
      */
-    async signIn({ profile, user }) {
+    async signIn({ user, profile }) {
       console.log('signIn - profile', profile);
       console.log('signIn - user', user);
+
+      if (user.email === 'jade@gmail.com')
+        throw makeAuthError('EmailSignInError', 'Not Exists Email!');
+
       return true;
     },
     async jwt({ token, user, trigger }) {
       console.log('🚀 ~ token:', token);
       console.log('🚀 ~ user:', user);
       // user가 없을 때만 trigger을 준다.
-      console.log('🚀 ~ trigger:', trigger);
+      if (trigger) console.log('🚀 ~ trigger:', trigger);
 
       // user가 있을 때도 있고 없을 떄도 있다. -> 무조건 token을 반환해야 하므로 user의 값을 담아서 보내준다.
       if (user) {
@@ -75,7 +79,7 @@ export const {
     },
   },
   pages: {
-    // signIn: '/sign',
+    signIn: '/sign',
     error: '/sign/error',
   },
   session: {
@@ -84,3 +88,9 @@ export const {
   trustHost: true,
   jwt: { maxAge: 30 * 60 },
 });
+
+const makeAuthError = (type: AuthError['type'], message?: string) => {
+  const err = new AuthError(message);
+  err.type = type;
+  return err;
+};
