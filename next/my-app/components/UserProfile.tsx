@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { logout } from '@/lib/sign.action';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
@@ -52,6 +53,9 @@ export default function UserProfile() {
               {12} Books
               {23} Marks 00 Followers
             </div>
+            <Button onClick={logout} variant={'outline'}>
+              LogOut
+            </Button>
           </div>
         </div>
       </Comp.content>

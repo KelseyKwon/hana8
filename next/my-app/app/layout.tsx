@@ -76,7 +76,7 @@ async function Authed({
 
           <div className="flex items-center">
             <ModeToggle />
-            <UserProfile />
+            {session?.user && <UserProfile />}
           </div>
         </nav>
         <div className="border p-3">{children}</div>
