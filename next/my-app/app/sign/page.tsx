@@ -1,7 +1,8 @@
 import { use } from 'react';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { loginGithub, loginGoogle } from '@/lib/sign.action';
+import { GithubLoginButton } from './GithubLoginButton';
+import { GoogleLoginButton } from './GoogleLoginButton';
 import SignForm from './SignForm';
 
 // type Provider = 'google' | 'github';
@@ -12,9 +13,10 @@ export default function SignPage({
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const { callbackUrl } = use(searchParams);
+
   return (
-    <>
-      <h1 className="text-xl">Sign In</h1>
+    <div className="mx-auto w-96 rounded-md border p-5">
+      <h1 className="mb-5 text-center font-semibold text-xl">Sign In</h1>
       {/* form Action은 항상 form Data를 받는다.  */}
       <form className="flex gap-3">
         {/* 서버로 내려갈 떄 redirectTO라는 이름으로 내려간다 */}
@@ -23,12 +25,14 @@ export default function SignPage({
           name="redirectTo"
           value={callbackUrl || '/hello'}
         />
-        <Button formAction={loginGoogle}>Google</Button>
-        <Button formAction={loginGithub}>Github</Button>
+        <div className="grid grid-cols-2 place-items-center gap-5">
+          <GoogleLoginButton formAction={loginGoogle} />
+          <GithubLoginButton formAction={loginGithub} />
+        </div>
       </form>
 
       <Separator className="my-8" />
       <SignForm />
-    </>
+    </div>
   );
 }

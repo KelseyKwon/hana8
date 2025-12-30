@@ -32,7 +32,12 @@ export const {
       async authorize(credentials) {
         console.log('🚀 ~ credentials:', credentials);
         const { email, passwd } = credentials;
-        return { id: '1', email: email as string, name: 'HONG', passwd };
+        return {
+          id: '1',
+          email: email as string,
+          name: 'HONG',
+          passwd: passwd as string,
+        };
       },
     }),
     Google,
@@ -44,18 +49,22 @@ export const {
      *
      * @return Promise
      */
-    async signIn({ user, profile }) {
-      console.log('signIn - profile', profile);
+    async signIn({ user, account }) {
+      console.log('signIn - profile', account);
       console.log('signIn - user', user);
 
-      if (user.email === 'jade@gmail.com')
-        throw makeAuthError('EmailSignInError', 'Not Exists Email!');
+      if (account?.provider === 'credentials') {
+        if (user.email === 'jade@gmail.com')
+          throw makeAuthError('EmailSignInError', 'Not Exists Email!');
 
+        if (!user.passwd) return false; // credential은 passwd가 없다.
+      }
       return true;
+      // if (user.passwd)
     },
     async jwt({ token, user, trigger }) {
-      console.log('🚀 ~ token:', token);
-      console.log('🚀 ~ user:', user);
+      // console.log('🚀 ~ token:', token);
+      // console.log('🚀 ~ user:', user);
       // user가 없을 때만 trigger을 준다.
       if (trigger) console.log('🚀 ~ trigger:', trigger);
 
@@ -64,6 +73,7 @@ export const {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+        token.isadmin = user.isadmin;
       }
 
       // 무조건 토큰을 반환해야 함!
@@ -74,10 +84,12 @@ export const {
         session.user.id = user.id;
         session.user.email = user.email;
         session.user.name = user.name;
+        session.user.isadmin = user.isadmin;
       }
       return session;
     },
   },
+
   pages: {
     signIn: '/sign',
     error: '/sign/error',
