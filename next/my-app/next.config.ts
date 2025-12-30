@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   // basePath: '/post',
   reactCompiler: true,
   // cache component를 default로 잡기,
-  cacheComponents: true,
+  cacheComponents: false,
   experimental: {
     typedEnv: true,
   },
