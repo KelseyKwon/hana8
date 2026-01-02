@@ -2,9 +2,10 @@ import { Button } from '@/components/ui/button';
 
 type Props = {
   formAction: (formData: FormData) => Promise<void>;
+  isRegist: boolean;
 };
 
-export function GoogleLoginButton({ formAction }: Props) {
+export function GoogleLoginButton({ formAction, isRegist }: Props) {
   return (
     <Button
       formAction={formAction}
@@ -34,7 +35,9 @@ export function GoogleLoginButton({ formAction }: Props) {
           d="M24 48c6.48 0 11.9-2.13 15.87-5.78l-7.09-5.52c-2.05 1.37-4.7 2.18-8.78 2.18-6.43 0-11.89-3.62-14.53-8.88l-7.91 6.47C6.4 42.52 14.63 48 24 48z"
         />
       </svg>
-      <span className="font-medium text-sm">Sign with Google</span>
+      <span className="font-medium text-sm dark:text-white">
+        {isRegist ? 'Regist' : 'Sign'} with Google
+        </span>
     </Button>
   );
 }

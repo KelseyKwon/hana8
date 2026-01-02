@@ -1,12 +1,12 @@
 'use client';
 
-import type { Route } from 'next';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useActionState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { loginEmail, type ValidError } from '@/lib/sign.action';
+import type { Route } from 'next';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useActionState } from 'react';
 
 export default function SignForm() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function SignForm() {
             id="email"
             name="email"
             type="email"
-            defaultValue={validError?.data.email}
+            defaultValue={validError?.data.email || ''}
             placeholder="user@email.com"
             className="w-full"
           />
@@ -48,7 +48,7 @@ export default function SignForm() {
             id="passwd"
             name="passwd"
             type="password"
-            defaultValue={validError?.data.passwd}
+            defaultValue={validError?.data.passwd || ''}
             placeholder="password..."
           />
           {validError?.error.passwd && (
