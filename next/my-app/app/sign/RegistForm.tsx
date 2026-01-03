@@ -1,21 +1,36 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
+import { useActionState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { regist } from '@/lib/sign.action';
-import { useSearchParams } from 'next/navigation';
-import { useActionState } from 'react';
 
 export default function RegistForm() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('callbackUrl') || '/hello';
-
-  const [validError, login, isPending] = useActionState(regist, undefined);
-
+  // 이게 힘드니까 아래와 같이 만들기
+  const defaultError =
+    process.env.NODE_ENV === 'development'
+      ? {
+          error: {},
+          data: {
+            email: 'sico@gmail.com',
+            name: 'sico',
+            passwd: '1212',
+            passwd2: '1212',
+          },
+        }
+      : undefined;
+  const [validError, makeRegist, isPending] = useActionState(
+    regist,
+    defaultError,
+  );
+  if (validError) console.log('validError>>', validError);
   return (
     <div className="grid place-items-center">
-      <form action={login} className="w-full space-y-3">
+      <form action={makeRegist} className="w-full space-y-3">
         <input type="hidden" name="redirectTo" value={redirectTo} />
 
         <div className="space-y-1">
@@ -24,6 +39,7 @@ export default function RegistForm() {
             id="email"
             name="email"
             type="email"
+            // validError가 있다면, data.email이 세팅이 되도록 한다.
             defaultValue={validError?.data.email || ''}
             placeholder="user@email.com"
             className="w-full"

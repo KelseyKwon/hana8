@@ -1,17 +1,29 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { loginEmail, type ValidError } from '@/lib/sign.action';
 import type { Route } from 'next';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useActionState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { loginEmail } from '@/lib/sign.action';
+import type { ValidError } from '@/lib/validator';
 
 export default function SignForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('callbackUrl') || '/hello';
+
+  const defaultError =
+    process.env.NODE_ENV === 'development'
+      ? {
+          error: {},
+          data: {
+            email: 'sico@gmail.com',
+            passwd: '1212',
+          },
+        }
+      : undefined;
 
   const [validError, login, isPending] = useActionState(
     async (_: ValidError | undefined, formData: FormData) => {
@@ -22,7 +34,7 @@ export default function SignForm() {
       }
       router.push(redirectTo as Route);
     },
-    undefined,
+    defaultError,
   );
   return (
     <div className="grid place-items-center">
