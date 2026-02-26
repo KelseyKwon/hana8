@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Builder
-public class User {
-	private Integer id;
-	private String username;
-	private String email;
-	private String tel;
+public class Post {
+	private int id;
+	private int userId;
+	private String title;
+	private String content;
 }

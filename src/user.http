@@ -10,7 +10,6 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "id": 0,
   "username": "Hong",
   "email": "hong@email.com",
   "tel": "010-1234-5678"
