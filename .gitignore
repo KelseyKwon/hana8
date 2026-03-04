@@ -43,3 +43,6 @@ tmp
 db.properties
 *security.properties
 *security.yml
+
+.DS_Store
+mysql/
