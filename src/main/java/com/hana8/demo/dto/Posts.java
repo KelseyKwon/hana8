@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Builder
-public class Post {
+public class Posts {
 	private int id;
 	private int userId;
 	private String title;

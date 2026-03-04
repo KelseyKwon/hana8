@@ -6,38 +6,38 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Primary;
 
-import com.hana8.demo.dto.Post;
+import com.hana8.demo.dto.Posts;
 
 // @Repository
 @Primary
-public class PostRepositoryImpl implements PostRepository {
-	private final Map<Integer, Post> posts = new HashMap<>();
+public class PostsRepositoryImpl implements PostsRepository {
+	private final Map<Integer, Posts> posts = new HashMap<>();
 
 	@Override
-	public List<Post> findAllPosts() {
+	public List<Posts> findAllPosts() {
 		return posts.values().stream().toList();
 	}
 
 	@Override
-	public Post findPost(int id) {
+	public Posts findPost(int id) {
 		return this.posts.get(id);
 	}
 
 	@Override
-	public Post addPost(PostAddDTO post) {
+	public Posts addPost(PostsDTO post) {
 		int id = posts.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
-		Post newer = Post.builder().id(id).title(post.getTitle()).content(post.getContent()).build();
+		Posts newer = Posts.builder().id(id).title(post.getTitle()).content(post.getBody()).build();
 		posts.put(id, newer);
 		return newer;
 	}
 
 	@Override
-	public Post updatePost(PostEditDTO post) {
-		Post oldPost = posts.get(post.getId());
-		oldPost.setTitle(post.getTitle());
-		oldPost.setContent(post.getBody());
+	public Posts updatePost(PostsDTO post) {
+		Posts oldPosts = posts.get(post.getId());
+		oldPosts.setTitle(post.getTitle());
+		oldPosts.setContent(post.getBody());
 
-		return oldPost;
+		return oldPosts;
 	}
 
 	@Override

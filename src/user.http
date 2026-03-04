@@ -1,19 +1,33 @@
 @baseUrl=http://localhost:8080
 
-GET {{baseUrl}}/users
-
-### user-info
-GET {{baseUrl}}/users/1
+### user list
+GET {{baseUrl}}/users/xxx/yyy
 
 ### user-regist
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "username": "Hong",
-  "email": "hong@email.com",
+  "username": "xxx",
+  "email": "hong@mail.com",
+  "comail": "hong@hanabank.com",
+  "tel": "010-123-5678",
+  "creditCard": "1234 1234 5678 5678"
+}
+
+### user-regist
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "Kim",
+  "email": "kim@mail.com",
   "tel": "010-1234-5678"
 }
+
+### user-info
+GET {{baseUrl}}/users/1
+
 
 ### user-update
 PUT {{baseUrl}}/users/1
@@ -29,5 +43,14 @@ Content-Type: application/json
 ### user-withdraw
 DELETE {{baseUrl}}/users/1
 
-### user-info
-GET {{baseUrl}}/users/1
+### user-regist
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "xxx",
+  "email": "hong@mail.com",
+  "comail": "hong@hanabank.com",
+  "tel": "010-123-5678",
+  "creditCard": "1234 1234 5678 5678"
+}

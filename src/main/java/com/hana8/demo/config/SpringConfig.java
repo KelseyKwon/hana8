@@ -6,11 +6,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 
-import com.hana8.demo.post.PostRepository;
-import com.hana8.demo.post.PostRepositoryImpl;
-import com.hana8.demo.post.PostRepositoryListImpl;
-import com.hana8.demo.post.PostService;
-import com.hana8.demo.post.PostServiceImpl;
+import com.hana8.demo.post.PostsRepository;
+import com.hana8.demo.post.PostsRepositoryImpl;
+import com.hana8.demo.post.PostsRepositoryListImpl;
+import com.hana8.demo.post.PostsService;
+import com.hana8.demo.post.PostsServiceImpl;
 import com.hana8.demo.service.HelpCallService;
 
 @Configuration
@@ -26,17 +26,17 @@ public class SpringConfig {
 	}
 
 	@Bean
-	public PostRepository postRepository() {
-		return new PostRepositoryImpl();
+	public PostsRepository postsrepository() {
+		return new PostsRepositoryImpl();
 	}
 
 	@Bean
-	public PostRepository postListRepository() {
-		return new PostRepositoryListImpl();
+	public PostsRepository postListRepository() {
+		return new PostsRepositoryListImpl();
 	}
 
 	@Bean
-	public PostService postService() {
-		return new PostServiceImpl(postRepository(), postListRepository());
+	public PostsService postService() {
+		return new PostsServiceImpl(postsrepository(), postListRepository());
 	}
 }
