@@ -46,3 +46,6 @@ db.properties
 
 .DS_Store
 mysql/
+
+node_modules
+.env*
