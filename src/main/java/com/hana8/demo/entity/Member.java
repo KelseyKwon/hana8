@@ -1,5 +1,8 @@
 package com.hana8.demo.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.annotations.ColumnDefault;
 
 import com.hana8.demo.common.enums.BloodType;
@@ -11,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -49,8 +53,16 @@ public class Member extends BaseEntity {
 	private String password;
 
 	@ColumnDefault("false")
-	private boolean isActive;
+	private Boolean isActive;
 
 	@Enumerated(EnumType.STRING)
 	private BloodType bloodType;
+
+	@OneToMany(mappedBy = "writer")
+	@Builder.Default
+	private List<Post> posts = new ArrayList<>();
+
+	@OneToMany(mappedBy = "replier")
+	@Builder.Default
+	private List<Reply> replies = new ArrayList<>();
 }

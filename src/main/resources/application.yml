@@ -8,12 +8,12 @@ spring:
     password: Hana8db!!
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
     show-sql: true
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
 
     properties:
       hibernate:
@@ -27,7 +27,7 @@ spring:
 
   sql:
     init:
-      mode: always
+      mode: never
 
   flyway:
     enabled: false
@@ -36,9 +36,9 @@ spring:
     resources:
       add-mappings: false
 
-  devtools:
-    livereload:
-      enabled: true
-    restart:
-      enabled: true
-      additional-paths: src/main/java
+#  devtools:
+#    livereload:
+#      enabled: true
+#    restart:
+#      enabled: true
+#      additional-paths: src/main/java

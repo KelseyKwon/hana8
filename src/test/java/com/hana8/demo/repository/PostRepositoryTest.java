@@ -2,65 +2,149 @@ package com.hana8.demo.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.jupiter.api.MethodOrderer;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.LongStream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.core.annotation.Order;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import com.hana8.demo.entity.Member;
 import com.hana8.demo.entity.Post;
+import com.hana8.demo.entity.PostBody;
 
-@ActiveProfiles("test")
-@DataJpaTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Rollback(false)
-class PostRepositoryTest {
-
+class PostRepositoryTest extends BaseRepositoryTest {
 	private static long id;
-	private final Post newPost = Post.builder().title("test").body("").writer("kelsey").build();
+	private static long orgCnt = 0;
+
 	@Autowired
-	private PostRepository postRepository;
+	private PostRepository repository;
+
+	@BeforeEach
+	void setOrgCnt() {
+		if (orgCnt == 0)
+			orgCnt = repository.count();
+	}
+
+	@Test
+	void createAllTest() {
+		Member m1 = Member.builder().id(1L).build();
+		Member m2 = Member.builder().id(2L).build();
+		Member m3 = Member.builder().id(3L).build();
+		Member[] writers = {m1, m2, m3};
+
+		List<Post> posts = LongStream.rangeClosed(4, 100)
+			.mapToObj(l -> {
+				Member writer = writers[(int)(l % 3)]; // 1, 2, 3번 멤버를 순환
+				Post post = Post.builder()
+					.title("Title" + l)
+					.writer(writer)
+					.build();
+				post.setBody(new PostBody("body of " + l));
+				return post;
+			}).toList();
+
+		repository.saveAll(posts);
+
+		// assertThat(repository.count()).isEqualTo(cnt + 97);
+	}
+
+	@Test
+	void pagingTest() {
+		Sort sort = Sort.by("id").descending();
+		Pageable pager = PageRequest.of(0, 10, sort);
+		// Sort sort1 = Sort.by("createdAt").descending();
+		// Sort sort2 = Sort.by("title").ascending();
+		// Pageable pager = PageRequest.of(0, 10, sort1.and(sort2));
+
+		Page<Post> page1 = repository.findAll(pager);
+		List<Post> posts = page1.getContent();
+		posts.stream().mapToLong(Post::getId).forEach(System.out::println);
+		// posts.forEach(p -> System.out.println(p.getCreatedAt() + " -- " + p.getTitle()));
+		System.out.println("page1.getTotalPages() = " + page1.getTotalPages());
+		assertThat(page1.getTotalPages()).isEqualTo(repository.count() / 10);
+		System.out.println("page1.getNumber() = " + page1.getNumber());
+		assertThat(page1.getNumber()).isEqualTo(0);
+		System.out.println("page1.getTotalElements() = " + page1.getTotalElements());
+		System.out.println("page1.getSize() = " + page1.getSize());
+		System.out.println("page1.isFirst() = " + page1.isFirst());
+		System.out.println("page1.isLast() = " + page1.isLast());
+
+		Page<Post> page2 = repository.findAll(page1.nextPageable());
+		System.out.println("page2.getNumber() = " + page2.getNumber());
+
+		assertThat(page1.getContent()).doesNotContainAnyElementsOf(page2.getContent());
+
+		if (page2.isLast())
+			return;
+
+		Page<Post> page3 = repository.findAll(page2.nextOrLastPageable());
+		System.out.println("page3.getNumber() = " + page3.getNumber());
+
+		// sort test
+		assertThat(page3.getContent()).isSortedAccordingTo(
+			Comparator.comparingLong(Post::getId).reversed()
+		);
+	}
+
+	@Test
+	void titleLikeTest() {
+		List<Post> posts = repository.findByTitleStartingWith("Title8");
+		System.out.println("posts = " + posts);
+		posts.stream().map(Post::getTitle).forEach(System.out::println);
+		assertThat(posts).isNotEmpty()
+			.allSatisfy(p ->
+				assertThat(p.getTitle()).contains("Title8")
+			);
+	}
+
+	@Test
+	void jpqlTest() {
+		List<Post> byIdBetween = repository.findByIdBetween(10L, 20L);
+		byIdBetween.stream().map(p -> p.getId() + " : " + p.getTitle())
+			.forEach(System.out::println);
+
+		List<Post> byAny = repository.findByAny(10, 20);
+		byAny.stream().map(p -> p.getId() + " : " + p.getTitle()).forEach(System.out::println);
+
+		List<Object[]> strings = repository.sortByCreatedAtAndTitle(10, 20);
+		strings.forEach(a -> System.out.println(Arrays.toString(a)));
+	}
 
 	@Test
 	@Order(1)
-	void writeTest() {
-		Post savedPost = postRepository.save(newPost);
-
-		assertThat(savedPost.getId()).isEqualTo(newPost.getId());
-		assertThat(savedPost).usingRecursiveComparison()
-			.ignoringFields("id", "createdAt", "updatedAt")
-			.isEqualTo(newPost);
-		id = savedPost.getId();
+	void createTest() {
+		Post savedPost = repository.save(new Post("Title 101", Member.builder().id(1L).build()));
+		Post post = repository.findById(savedPost.getId()).orElseThrow();
+		assertThat(post).isEqualTo(savedPost);
+		assertThat(orgCnt + 1).isEqualTo(repository.count());
+		id = post.getId();
 	}
 
 	@Test
 	@Order(2)
-	void readTest() {
-		Post foundPost = postRepository.findById(this.id).orElseThrow();
-		assertThat(foundPost).usingRecursiveComparison()
-			.ignoringFields("id", "createdAt", "updatedAt")
-			.isEqualTo(newPost);
+	void updateTest() {
+		Post post = repository.findById(id).orElseThrow();
+		post.setTitle(post.getTitle() + "xxx");
+		repository.save(post);
+
+		Post post2 = repository.findById(id).orElseThrow();
+		assertThat(post.getTitle()).isEqualTo(post2.getTitle());
 	}
 
 	@Test
 	@Order(3)
-	void updateTest() {
-		Post post = postRepository.findById(id).orElseThrow();
-		post.setTitle(post.getTitle() + "xxx");
-		Post updatedPost = postRepository.save(post);
-		assertThat(post.getTitle()).isEqualTo(updatedPost.getTitle());
-	}
-
-	@Test
-	@Order(4)
 	void deleteTest() {
-		postRepository.deleteById(id);
-		assertThat(postRepository.count()).isEqualTo(0);
+		Post post = repository.findById(id).orElseThrow();
+		repository.delete(post);
+		assertThat(orgCnt).isEqualTo(repository.count());
 	}
 
 }

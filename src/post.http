@@ -1,27 +1,37 @@
-#@baseUrl=http://localhost:8080/posts
-@baseUrl=http://localhost:8080/posts/list
+@baseUrl=http://localhost:8080/api/posts
 
 ### post list
 GET {{baseUrl}}/
 
+### post list
+GET {{baseUrl}}?page=1
+
+### post list
+GET {{baseUrl}}?page=2&pageSize=15
+
+### post search
+GET {{baseUrl}}?page=1&title=Title8
+
+### post search
+GET {{baseUrl}}?page=1&title=Title8&body=body of 8
+
+### post search
+GET {{baseUrl}}?page=1&title=Title8&writer=writer80
+
+### post search
+GET {{baseUrl}}?page=1&title=Title8&writedate=2026-03-05
+
+
 ### post-regist
 POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "title": "title 1",
-  "body": "body 1",
-  "writer": "Hong"
-}
-
-### post-regist
-POST {{baseUrl}}
-Content-Type: application/json
-
-{
-  "title": "title - kim",
-  "body": "body - kim",
-  "writer": "Kim"
+  "title": "xxxxxxxx",
+  "body": {
+    "body": "body 1"
+  },
+  "writer": "1"
 }
 
 ### post-info
@@ -29,14 +39,45 @@ GET {{baseUrl}}/1
 
 
 ### post-update
-PUT {{baseUrl}}/1
+PUT {{baseUrl}}/3
 Content-Type: application/json
 
 {
-  "title": "title 1xxx",
-  "body": "body 1xxx",
-  "writer": "Hongxxx"
+  "id": 3,
+  "title": "title 1x",
+  "body": {
+    "id": 3,
+    "body": "body 1xxx"
+  }
 }
 
 ### post-remove
-DELETE {{baseUrl}}/1
+DELETE {{baseUrl}}/102
+
+### get replies
+GET {{baseUrl}}/1/replies
+
+### add reply
+POST {{baseUrl}}/1/replies
+Content-Type: application/json
+
+{
+  "reply": "reply 1111",
+  "replierId": 2
+}
+
+### get reply
+GET {{baseUrl}}/1/replies/3
+
+### edit reply
+PUT {{baseUrl}}/1/replies/3
+Content-Type: application/json
+
+{
+  "id": 3,
+  "reply": "reply xxxxxxx"
+}
+
+
+### delete reply
+DELETE {{baseUrl}}/102/replies/5
